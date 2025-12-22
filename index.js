@@ -1,18 +1,18 @@
 const path = require("path");
-
 const express = require("express");
-
 const dotenv = require("dotenv");
-dotenv.config({ path: "config.env" });
-
 const morgan = require("morgan");
 const cors = require("cors");
 
+// Load environment variables
+dotenv.config({ path: "config.env" });
+
+// Custom utilities
 const ApiError = require("./utils/apiError");
 const globalError = require("./middlware/errMiddlware");
 const dbConnection = require("./config/database");
 
-//* import our routes
+// Import routes
 const parentRoute = require("./routes/parentRoutes");
 const childRoutes = require("./routes/childRoutes");
 const authRoute = require("./routes/authRoutes");
@@ -27,35 +27,35 @@ const sessionReviewRoute = require("./routes/sessionReviewRoutes");
 const charityRoute = require("./routes/charityRoutes");
 const orderRoute = require("./routes/orderRoutes");
 const { webhookCheckout } = require("./services/orderServices");
-//*------
 const aiRoute = require("./routes/AiRoutes/aiRoutes");
 
-//* DB Connection
+// Connect to MongoDB
 dbConnection();
 
-//*Express app
+// Initialize Express app
 const app = express();
 
 app.use(cors());
 app.options("*", cors());
 
-//* webhookCheckout
+// Stripe webhook (must be before express.json())
 app.post(
   "/webhook-checkout",
   express.raw({ type: "application/json" }),
   webhookCheckout
 );
 
-//* Middlwares
+// Middleware
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "uploads")));
 
-if (process.env.MODE_ENV == "development") {
+// Development logging
+if (process.env.MODE_ENV === "development") {
   app.use(morgan("dev"));
-  console.log(`Mode: ${process.env.MODE_ENV}`);
+  console.log(`🔧 Environment: ${process.env.MODE_ENV}`);
 }
 
-//*Mount Routes
+// Mount API routes
 app.use("/api/v1/parents", parentRoute);
 app.use("/api/v1/childs", childRoutes);
 app.use("/api/v1/auth", authRoute);
@@ -69,39 +69,43 @@ app.use("/api/v1/sessions", sessionRoute);
 app.use("/api/v1/sessionReview", sessionReviewRoute);
 app.use("/api/v1/charities", charityRoute);
 app.use("/api/v1/orders", orderRoute);
-//*-----------------------------------------------
 app.use("/api/v1/ai", aiRoute);
 
-//* Mount Routes
+// Root route
 app.get("/", (req, res) => {
-  res.send("<h1>صلي علي النبي </h1>");
+  res.json({
+    message: "ASD Healthcare Management Platform API",
+    version: "1.0.0",
+    status: "active"
+  });
 });
 
+// Handle undefined routes
 app.all("*", (req, res, next) => {
-  next(new ApiError(`can't find this route: ${req.originalUrl}`, 400));
+  next(new ApiError(`Cannot find ${req.originalUrl} on this server`, 404));
 });
 
-//*Global error handel Middlware(inside the express)
+// Global error handling middleware
 app.use(globalError);
 
 const PORT = process.env.PORT || 8000;
 
-// Only start server if not in Vercel serverless environment
+// Start server (skip in Vercel serverless environment)
 if (process.env.VERCEL !== '1') {
   const server = app.listen(PORT, () => {
-    console.log(`App Running On PORT: ${PORT}`);
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📡 API: http://localhost:${PORT}/api/v1`);
   });
 
-  //* Global error handle Middleware (outside the express || mongodb || Server Error)
+  // Handle unhandled promise rejections
   process.on("unhandledRejection", (err) => {
-    console.error(`unhandledRejection Errors: ${err.name} | ${err.message}`);
-
+    console.error(`❌ Unhandled Rejection: ${err.name} | ${err.message}`);
     server.close(() => {
-      console.error(`Shutting down....`);
+      console.error("💥 Server shutting down...");
       process.exit(1);
     });
   });
 }
 
-// Export the Express app for Vercel
+// Export app for Vercel serverless deployment
 module.exports = app;
