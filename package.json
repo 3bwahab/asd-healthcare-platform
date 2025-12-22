@@ -1,14 +1,28 @@
 {
-  "name": "asd-api",
+  "name": "asd-healthcare-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "ASD Healthcare Management Platform - RESTful API for autism spectrum disorder support services",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [
+    "asd",
+    "autism",
+    "healthcare",
+    "api",
+    "express",
+    "mongodb",
+    "nodejs"
+  ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "dependencies": {
     "aws-sdk": "^2.1692.0",
     "axios": "^1.8.4",
