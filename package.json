@@ -20,9 +20,25 @@
     "api",
     "express",
     "mongodb",
-    "nodejs"
+    "nodejs",
+    "stripe",
+    "cloudinary",
+    "jwt",
+    "rest-api",
+    "autism-spectrum-disorder",
+    "healthcare-platform",
+    "appointment-booking",
+    "ai-screening"
   ],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/username/ASD_Final_Project.git"
+  },
+  "bugs": {
+    "url": "https://github.com/username/ASD_Final_Project/issues"
+  },
+  "homepage": "https://github.com/username/ASD_Final_Project#readme",
+  "author": "ASD Healthcare Platform Contributors",
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0",
