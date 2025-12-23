@@ -9,7 +9,7 @@ dotenv.config({ path: "config.env" });
 
 // Custom utilities
 const ApiError = require("./utils/apiError");
-const globalError = require("./middlware/errMiddlware");
+const globalError = require("./middleware/errorMiddleware");
 const dbConnection = require("./config/database");
 
 // Import routes

@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git checkout:*)",
+      "Bash(git rm:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nsecurity: remove exposed credentials and add environment template\n\n- Remove config.env from repository tracking\n- Add .env.example with placeholder values for all required environment variables\n- Update .gitignore with comprehensive patterns for security files, logs, and build artifacts\n- Prevent future credential exposure with enhanced gitignore rules\n\nBREAKING CHANGE: config.env is no longer tracked. Copy .env.example to config.env and fill in your credentials.\n\nSecurity Notice: All credentials previously in config.env must be rotated immediately:\n- MongoDB Atlas password\n- Cloudinary API keys  \n- Gmail app password\n- Stripe API keys\n- JWT secret key\nEOF\n\\)\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nchore: initialize Node.js project with metadata\n\n- Add comprehensive project description\n- Set package name to asd-healthcare-api\n- Add keywords for discoverability \\(asd, autism, healthcare, api\\)\n- Change license from ISC to MIT for open-source compatibility\n- Add Node.js engine requirements \\(>=18.0.0\\)\n- Add start script for production deployment\n- Organize scripts in logical order \\(start, dev, test\\)\n\nThis establishes the project foundation with proper metadata for npm registry\nand open-source distribution.\nEOF\n\\)\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nchore: add EditorConfig for consistent coding style\n\n- Configure UTF-8 charset for all files\n- Set LF line endings for cross-platform compatibility\n- Enforce 2-space indentation for JavaScript and JSON\n- Add final newline and trim trailing whitespace\n- Configure Markdown exception for trailing whitespace\n- Set tab indentation for Makefiles\n\nEditorConfig ensures consistent code formatting across different\neditors and IDEs, improving team collaboration and code quality.\nEOF\n\\)\")",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\ndocs: add initial README with project overview\n\n- Add project description and motivation\n- List key features \\(user management, healthcare services, AI integration\\)\n- Document tech stack with versions\n- Add Getting Started section with prerequisites\n- Include installation instructions\n- Add MIT license and work-in-progress status\n\nThis provides essential documentation for developers getting started\nwith the project and establishes the foundation for comprehensive docs.\nEOF\n\\)\")",
+      "Bash(git commit:*)",
+      "Bash(git mv:*)"
+    ]
+  }
+}
