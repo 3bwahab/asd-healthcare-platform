@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"**/*.{js,json,md}\"",
-    "format:check": "prettier --check \"**/*.{js,json,md}\""
+    "format:check": "prettier --check \"**/*.{js,json,md}\"",
+    "prepare": "husky install"
   },
   "keywords": [
     "asd",
@@ -52,6 +53,8 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
     "nodemon": "^3.1.7",
     "prettier": "^3.1.1"
   }
