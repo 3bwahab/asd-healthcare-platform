@@ -8,7 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned
-- Jest + Supertest testing infrastructure with 70%+ coverage
+- Complete unit tests for models, middleware, and services
+- Complete integration tests for authentication and CRUD operations
+- End-to-end tests for user journeys
 - API documentation with Swagger/OpenAPI
 - Performance monitoring and logging (Winston + Sentry)
 - Redis caching for frequently accessed data
@@ -56,6 +58,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CODE_OF_CONDUCT.md establishing community guidelines
 - MIT License for open-source distribution
 - CHANGELOG.md for version history tracking
+- Comprehensive API examples documentation (docs/API_EXAMPLES.md) with 900+ lines
+  - Authentication flow examples (signup, login, password reset)
+  - User management endpoint examples
+  - Healthcare service examples (appointments, sessions, reviews)
+  - AI screening workflow examples
+  - Payment integration examples
+  - Query parameter documentation (pagination, filtering, sorting)
+
+#### Testing Infrastructure
+- Jest v29.7.0 testing framework with Supertest v6.3.3
+- MongoDB Memory Server v9.1.3 for isolated database testing
+- Nock v13.4.0 for HTTP request mocking
+- @faker-js/faker v8.3.1 for test data generation
+- Jest configuration with coverage thresholds (70% global, 80% services)
+- Test setup and teardown with automatic service mocking
+- Database helper utilities (connect, disconnect, clear, drop)
+- Authentication helper utilities (token generation, password hashing, test user creation)
+- Mock helper utilities (FastAPI, Stripe, Cloudinary, Email mocking)
+- Test data factories (users, appointments, sessions, reviews)
+- Unit tests for utility functions (29+ test cases):
+  - apiError.test.js (11 test cases)
+  - createToken.test.js (10 test cases)
+  - apiFeatures.test.js (8 test cases)
+- Integration tests for health endpoints (7 test cases)
+- Comprehensive testing documentation (tests/README.md)
+- Test scripts for unit, integration, E2E, and coverage reporting
 
 ### Changed
 
