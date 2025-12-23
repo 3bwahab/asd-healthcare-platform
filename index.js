@@ -27,7 +27,7 @@ const sessionReviewRoute = require("./routes/sessionReviewRoutes");
 const charityRoute = require("./routes/charityRoutes");
 const orderRoute = require("./routes/orderRoutes");
 const { webhookCheckout } = require("./services/orderServices");
-const aiRoute = require("./routes/AiRoutes/aiRoutes");
+const aiRoute = require("./routes/ai/aiRoutes");
 
 // Connect to MongoDB
 dbConnection();
