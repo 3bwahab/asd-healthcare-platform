@@ -95,8 +95,14 @@ exports.singupForParent = asyncHandler(async (req, res, next) => {
   try {
     await sendEmail({
       email: req.body.email,
-      subject: "Your Email reset code (valid for 10 minutes)",
+      subject: "Welcome to ASD Healthcare Platform - Verify Your Email",
       message,
+      template: "emailVerification",
+      templateData: {
+        userName: parent.userName,
+        verificationCode: resetCode,
+        title: "Email Verification",
+      },
     });
   } catch (error) {
     parent.emailResetCode = undefined;
@@ -141,6 +147,12 @@ exports.resendEmailResetCode = asyncHandler(async (req, res, next) => {
       email,
       subject: "Resend Email Verification Code",
       message,
+      template: "emailVerification",
+      templateData: {
+        userName: parent.userName,
+        verificationCode: resetCode,
+        title: "Email Verification",
+      },
     });
 
     res.status(200).json({
@@ -427,8 +439,15 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   try {
     await sendEmail({
       email: req.body.email,
-      subject: "Your password reset code (valid for 10 minutes)",
+      subject: "Password Reset Request - ASD Healthcare Platform",
       message,
+      template: "passwordReset",
+      templateData: {
+        userName: parent.userName,
+        email: req.body.email,
+        resetCode: resetCode,
+        title: "Password Reset",
+      },
     });
   } catch (error) {
     parent.passwordResetCode = undefined;
@@ -465,8 +484,15 @@ exports.resendResetCode = asyncHandler(async (req, res, next) => {
 
   await sendEmail({
     email,
-    subject: "Resend Password Reset Code",
+    subject: "Resend Password Reset Code - ASD Healthcare Platform",
     message,
+    template: "passwordReset",
+    templateData: {
+      userName: parent.userName,
+      email: email,
+      resetCode: resetCode,
+      title: "Password Reset",
+    },
   });
 
   res.status(200).json({

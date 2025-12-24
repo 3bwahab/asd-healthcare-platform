@@ -1,11 +1,14 @@
 const nodemailer = require("nodemailer");
+const renderEmailTemplate = require("./emailRenderer");
 
 /**
- * Send email using Nodemailer
+ * Send email using Nodemailer with HTML template support
  * @param {Object} options - Email options
  * @param {string} options.email - Recipient email address
  * @param {string} options.subject - Email subject
- * @param {string} options.message - Email message body
+ * @param {string} options.message - Plain text email message body (fallback)
+ * @param {string} [options.template] - Name of HTML template to use (optional)
+ * @param {Object} [options.templateData] - Data to inject into template (optional)
  * @returns {Promise<void>}
  */
 const sendEmail = async (options) => {
@@ -25,10 +28,24 @@ const sendEmail = async (options) => {
     from: `ASD Healthcare Platform <${process.env.EMAIL_USER}>`,
     to: options.email,
     subject: options.subject,
-    text: options.message,
+    text: options.message, // Plain text fallback
   };
 
-  // 3. Send email
+  // 3. Add HTML content if template is provided
+  if (options.template && options.templateData) {
+    try {
+      const htmlContent = await renderEmailTemplate(
+        options.template,
+        options.templateData
+      );
+      mailOptions.html = htmlContent;
+    } catch (error) {
+      console.error("Error rendering email template:", error);
+      // Fall back to plain text if template rendering fails
+    }
+  }
+
+  // 4. Send email
   await transporter.sendMail(mailOptions);
 };
 
