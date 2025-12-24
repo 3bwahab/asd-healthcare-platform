@@ -42,4 +42,11 @@ const appointmentSchema = new mongoose.Schema(
 //   next();
 // });
 
+// Indexes for query performance
+appointmentSchema.index({ doctorId: 1 });
+appointmentSchema.index({ parentId: 1 });
+appointmentSchema.index({ date: 1 });
+appointmentSchema.index({ status: 1 });
+appointmentSchema.index({ doctorId: 1, date: 1, time: 1 }, { unique: true });
+
 module.exports = mongoose.model("Appointment", appointmentSchema);

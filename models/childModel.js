@@ -95,4 +95,10 @@ childSchema.post("findOneAndDelete", async function ({ parent }) {
   await this.model.calcNumOfChild(parent);
 });
 
+// Indexes for query performance
+childSchema.index({ parent: 1 });
+childSchema.index({ age: 1 });
+childSchema.index({ birthday: 1 });
+childSchema.index({ autism_level: 1 });
+
 module.exports = mongoose.model("Child", childSchema);

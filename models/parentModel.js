@@ -104,4 +104,13 @@ parentSchema.pre("save", async function (next) {
   next();
 });
 
+// Indexes for query performance
+parentSchema.index({ email: 1 }, { unique: true });
+parentSchema.index({ phone: 1 });
+parentSchema.index({ role: 1 });
+parentSchema.index({ active: 1 });
+parentSchema.index({ session_id: 1 });
+parentSchema.index({ passwordResetCode: 1 });
+parentSchema.index({ emailResetCode: 1 });
+
 module.exports = mongoose.model("Parent", parentSchema);

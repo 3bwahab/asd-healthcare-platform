@@ -58,4 +58,11 @@ const orderSchema = new mongoose.Schema(
 //   next();
 // });
 
+// Indexes for query performance
+orderSchema.index({ parent: 1 });
+orderSchema.index({ doctor: 1 });
+orderSchema.index({ isPaid: 1 });
+orderSchema.index({ paidAt: -1 });
+orderSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model("Order", orderSchema);

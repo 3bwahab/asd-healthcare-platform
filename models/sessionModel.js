@@ -83,4 +83,11 @@ sessionSchema.pre(/^find/, function (next) {
   next();
 });
 
+// Indexes for query performance
+sessionSchema.index({ doctorId: 1 });
+sessionSchema.index({ parentId: 1 });
+sessionSchema.index({ statusOfSession: 1 });
+sessionSchema.index({ session_date: 1 });
+sessionSchema.index({ doctorId: 1, parentId: 1 });
+
 module.exports = mongoose.model("Session", sessionSchema);

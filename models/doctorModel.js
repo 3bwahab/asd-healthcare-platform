@@ -66,4 +66,11 @@ doctorSchema.pre(/^find/, function (next) {
   next();
 });
 
+// Indexes for query performance
+doctorSchema.index({ parent: 1 });
+doctorSchema.index({ speciailization: 1 });
+doctorSchema.index({ ratingAverage: -1 });
+doctorSchema.index({ Session_price: 1 });
+doctorSchema.index({ role: 1 });
+
 module.exports = mongoose.model("Doctor", doctorSchema);
