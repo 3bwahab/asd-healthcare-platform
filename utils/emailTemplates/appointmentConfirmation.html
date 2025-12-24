@@ -1,0 +1,47 @@
+<h2>Appointment Confirmed! 📅</h2>
+
+<p>Hi <strong>{{parentName}}</strong>,</p>
+
+<p>Great news! Your appointment has been successfully booked. We're looking forward to providing the best care for <strong>{{childName}}</strong>.</p>
+
+<div class="info-box">
+    <strong>📋 Appointment Details</strong>
+    <p style="margin-top: 10px;">
+        <strong style="color: #667eea;">Doctor:</strong> {{doctorName}}<br>
+        <strong style="color: #667eea;">Specialization:</strong> {{specialization}}<br>
+        <strong style="color: #667eea;">Date:</strong> {{date}}<br>
+        <strong style="color: #667eea;">Time:</strong> {{time}}<br>
+        <strong style="color: #667eea;">Duration:</strong> {{duration}} minutes<br>
+        {{#if sessionPrice}}
+        <strong style="color: #667eea;">Session Price:</strong> {{sessionPrice}} EGP
+        {{/if}}
+    </p>
+</div>
+
+<p><strong>What to Bring:</strong></p>
+<ul style="color: #555555; margin-left: 20px; margin-bottom: 15px;">
+    <li>Previous medical reports (if any)</li>
+    <li>List of current medications</li>
+    <li>Insurance card (if applicable)</li>
+    <li>Any questions or concerns you'd like to discuss</li>
+</ul>
+
+<div class="divider"></div>
+
+<p><strong>Preparation Tips:</strong></p>
+<ul style="color: #555555; margin-left: 20px; margin-bottom: 15px;">
+    <li>Arrive 10 minutes early for check-in</li>
+    <li>Bring comfort items for your child if needed</li>
+    <li>Note any recent behavioral changes or concerns</li>
+    <li>Prepare a list of questions for the doctor</li>
+</ul>
+
+<div class="divider"></div>
+
+<p><strong>Need to Reschedule?</strong></p>
+<p>If you need to change or cancel your appointment, please do so at least 24 hours in advance through your account dashboard or by contacting us.</p>
+
+<p>We're here to support you every step of the way!</p>
+
+<p>Best regards,<br>
+<strong>The ASD Healthcare Team</strong></p>
