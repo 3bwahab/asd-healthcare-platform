@@ -9,7 +9,10 @@
       "Bash(git commit -m \"$\\(cat <<''EOF''\nchore: add EditorConfig for consistent coding style\n\n- Configure UTF-8 charset for all files\n- Set LF line endings for cross-platform compatibility\n- Enforce 2-space indentation for JavaScript and JSON\n- Add final newline and trim trailing whitespace\n- Configure Markdown exception for trailing whitespace\n- Set tab indentation for Makefiles\n\nEditorConfig ensures consistent code formatting across different\neditors and IDEs, improving team collaboration and code quality.\nEOF\n\\)\")",
       "Bash(git commit -m \"$\\(cat <<''EOF''\ndocs: add initial README with project overview\n\n- Add project description and motivation\n- List key features \\(user management, healthcare services, AI integration\\)\n- Document tech stack with versions\n- Add Getting Started section with prerequisites\n- Include installation instructions\n- Add MIT license and work-in-progress status\n\nThis provides essential documentation for developers getting started\nwith the project and establishes the foundation for comprehensive docs.\nEOF\n\\)\")",
       "Bash(git commit:*)",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(git remote:*)",
+      "Bash(git push:*)",
+      "Bash(npm install:*)"
     ]
   }
 }

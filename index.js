@@ -3,6 +3,9 @@ const express = require("express");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const cors = require("cors");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const mongoSanitize = require("express-mongo-sanitize");
 
 // Load environment variables
 dotenv.config({ path: "config.env" });
@@ -34,6 +37,18 @@ dbConnection();
 
 // Initialize Express app
 const app = express();
+
+// Security middleware - must be early in middleware stack
+app.use(helmet());
+app.use(mongoSanitize());
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again later.",
+});
+app.use("/api", limiter);
 
 // CORS configuration - restrict to allowed origins
 const allowedOrigins = process.env.ALLOWED_ORIGINS

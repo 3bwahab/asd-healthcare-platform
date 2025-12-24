@@ -47,7 +47,7 @@ const createToken = require("../utils/createToken");
 
 //     await sendEmail({
 //       email: req.body.email,
-//       subject: "Your Email reset code(valide for 10 mints)",
+//       subject: "Your Email reset code (valid for 10 minutes)",
 //       message,
 //     });
 
@@ -83,7 +83,7 @@ exports.singupForParent = asyncHandler(async (req, res, next) => {
 
   //* save hashed Email rest code into db
   parent.emailResetCode = hashResetCode;
-  //* add expiration time for Email reset code (10 mints)
+  //* add expiration time for Email reset code (10 minutes)
   parent.emailResetExpire = Date.now() + 10 * 60 * 1000;
 
   parent.emailResetVerfied = false;
@@ -95,7 +95,7 @@ exports.singupForParent = asyncHandler(async (req, res, next) => {
   try {
     await sendEmail({
       email: req.body.email,
-      subject: "Your Email reset code(valide for 10 mints)",
+      subject: "Your Email reset code (valid for 10 minutes)",
       message,
     });
   } catch (error) {
@@ -416,7 +416,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
   //* save hashed password rest code into db
   parent.passwordResetCode = hashResetCode;
-  //* add expiration time for password reset code (10 mints)
+  //* add expiration time for password reset code (10 minutes)
   parent.passwordResetExpire = Date.now() + 10 * 60 * 1000;
 
   parent.passwordResetVerfied = false;
@@ -427,7 +427,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   try {
     await sendEmail({
       email: req.body.email,
-      subject: "Your password reset code(valide for 10 mints)",
+      subject: "Your password reset code (valid for 10 minutes)",
       message,
     });
   } catch (error) {

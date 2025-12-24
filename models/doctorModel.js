@@ -4,13 +4,13 @@ const doctorSchema = new mongoose.Schema(
   {
     parent: {
       type: mongoose.Schema.ObjectId,
-      required: [true, "Docotr Must belong to UserId..."],
+      required: [true, "Doctor must belong to User ID"],
       ref: "Parent",
     },
 
     speciailization: {
       type: String,
-      required: [true, "Doctor Speciailization Required.."],
+      required: [true, "Doctor specialization is required"],
     },
 
     qualifications: {
