@@ -151,6 +151,20 @@ const createCardOrderForWeb = async (session) => {
     return;
   }
 
+  // Check if order already exists (idempotency)
+  const existingOrder = await Order.findOne({
+    parent: parent._id,
+    doctor: doctorId,
+    price: sessionPrice,
+    isPaid: true,
+    paymentMethodType: "card",
+  });
+
+  if (existingOrder) {
+    console.log("Order already exists (webhook duplicate), skipping:", existingOrder._id);
+    return;
+  }
+
   // 3) Create order with default paymentMethodType card
   const order = await Order.create({
     parent: parent._id,
@@ -161,7 +175,7 @@ const createCardOrderForWeb = async (session) => {
     paymentMethodType: "card",
   });
 
-  console.log(order);
+  console.log("Order created successfully:", order);
 };
 
 const createCardOrderForMobile = async (paymentIntent) => {
@@ -185,6 +199,20 @@ const createCardOrderForMobile = async (paymentIntent) => {
 
   // 3) Get session price from doctor
   const sessionPrice = doctor.Session_price;
+
+  // Check if order already exists (idempotency)
+  const existingOrder = await Order.findOne({
+    parent: parent._id,
+    doctor: doctor._id,
+    price: sessionPrice,
+    isPaid: true,
+    paymentMethodType: "card",
+  });
+
+  if (existingOrder) {
+    console.log("Order already exists (webhook duplicate), skipping:", existingOrder._id);
+    return;
+  }
 
   // 4) Create the order
   const order = await Order.create({

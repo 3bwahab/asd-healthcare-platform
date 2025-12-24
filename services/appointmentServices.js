@@ -22,6 +22,7 @@ exports.createAppointment = asyncHandler(async (req, res, next) => {
   // Create appointments for each slot
   const createdAppointments = [];
 
+  // Check all slots for conflicts before creating any
   for (const slot of availableSlots) {
     const { date, day, time } = slot;
 
@@ -40,6 +41,11 @@ exports.createAppointment = asyncHandler(async (req, res, next) => {
         )
       );
     }
+  }
+
+  // All slots are available, create them atomically
+  for (const slot of availableSlots) {
+    const { date, day, time } = slot;
 
     const appointment = await Appointment.create({
       doctorId,
@@ -115,11 +121,17 @@ exports.updateAppointment = asyncHandler(async (req, res, next) => {
 exports.deleteAppointment = asyncHandler(async (req, res, next) => {
   const { appointmentId } = req.body;
 
-  const appointment = await Appointment.findByIdAndDelete(appointmentId);
+  // SECURITY FIX: Find appointment first before deletion
+  const appointment = await Appointment.findById(appointmentId);
   if (!appointment) {
     return next(
       new ApiError(`No appointment found for ID: ${appointmentId}`, 404)
     );
+  }
+
+  // SECURITY FIX: Check authorization BEFORE deleting
+  if (appointment.doctorId.toString() !== req.doctor._id.toString()) {
+    return next(new ApiError("Unauthorized doctor", 403));
   }
 
   const doctor = await Doctor.findById(appointment.doctorId);
@@ -127,17 +139,16 @@ exports.deleteAppointment = asyncHandler(async (req, res, next) => {
   if (!doctor) {
     return next(
       new ApiError(
-        `The Doctor Belong To This Appointment No longer Exist Id: ${appointment.doctorId}`,
+        `The doctor for this appointment no longer exists (ID: ${appointment.doctorId})`,
         404
       )
     );
   }
 
-  if (appointment.doctorId.toString() !== req.doctor._id.toString()) {
-    return next(new ApiError("Unauthorized doctor", 403));
-  }
+  // Now safe to delete after authorization check passed
+  await Appointment.findByIdAndDelete(appointmentId);
 
-  res.status(200).json({ message: "Appointment deleted" });
+  res.status(200).json({ message: "Appointment deleted successfully" });
 });
 
 //** 5- Get Available Appointments

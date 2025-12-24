@@ -87,7 +87,7 @@ exports.singupForParent = asyncHandler(async (req, res, next) => {
   parent.emailResetExpire = Date.now() + 10 * 60 * 1000;
 
   parent.emailResetVerfied = false;
-  parent.save();
+  await parent.save();
 
   //*1-Send reset Code To email in body
   let message = `Hi ${parent.userName},\n We received a request to reset the Email on your ASD Account. \n ${resetCode} \n Enter this code to complete the reset. \n Thanks for helping us keep your account secure.\n The ASD Team`;
@@ -167,6 +167,7 @@ exports.verifyEmailResetCode = asyncHandler(async (req, res, next) => {
 
   const parent = await Parent.findOne({
     emailResetCode: hashResetCode,
+    emailResetExpire: { $gt: Date.now() },
   });
 
   if (!parent) {

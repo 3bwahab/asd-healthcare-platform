@@ -27,7 +27,10 @@ exports.createFilterObj = (req, res, next) => {
 exports.createChild = asyncHandler(async (req, res, next) => {
   const parent = await Parent.findById(req.parent._id);
   if (!parent) {
-    return next(new ApiError(`Ther is no parnet for this id:${val}`), 404);
+    // BUG FIX: Fixed typos and undefined variable 'val'
+    return next(
+      new ApiError(`There is no parent for this id: ${req.parent._id}`, 404)
+    );
   }
 
   const child = await Child.create({
@@ -39,7 +42,7 @@ exports.createChild = asyncHandler(async (req, res, next) => {
     healthDetails: req.body.healthDetails,
   });
 
-  res.status(200).json({ data: child });
+  res.status(201).json({ data: child });
 });
 
 /**
@@ -79,6 +82,10 @@ exports.deleteSpecificChild = factory.deleteOne(Child);
  */
 
 exports.deleteAllChild = asyncHandler(async (req, res, next) => {
-  await Child.deleteMany();
-  res.status(200).json({ message: "Childs deleted successfully" });
+  // SECURITY FIX: Only delete children belonging to authenticated parent
+  const result = await Child.deleteMany({ parent: req.parent._id });
+  res.status(200).json({
+    message: "Children deleted successfully",
+    deletedCount: result.deletedCount,
+  });
 });

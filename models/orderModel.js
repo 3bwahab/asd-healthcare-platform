@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 const orderSchema = new mongoose.Schema(
   {
     parent: {
-      type: String,
+      type: mongoose.Schema.ObjectId,
       required: [true, "the order must belong to Parent"],
       ref: "Parent",
     },
     doctor: {
-      type: String,
+      type: mongoose.Schema.ObjectId,
       required: [true, "the order must belong to Doctor"],
       ref: "Doctor",
     },

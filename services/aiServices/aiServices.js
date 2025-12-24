@@ -516,7 +516,7 @@ exports.saveChatWithAI = asyncHandler(async (req, res, next) => {
 
 //*---Chat History--------------
 
-exports.getChatHistory = async (req, res) => {
+exports.getChatHistory = asyncHandler(async (req, res, next) => {
   const { session_id } = req.params;
 
   const aiResponse = await axios.get(
@@ -529,4 +529,4 @@ exports.getChatHistory = async (req, res) => {
   }
 
   res.status(200).json(aiResponse.data);
-};
+});

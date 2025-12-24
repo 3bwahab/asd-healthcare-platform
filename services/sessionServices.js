@@ -12,11 +12,12 @@ const ApiError = require("../utils/apiError");
  * @access private/Session
  */
 
-exports.createSession = asyncHandler(async (req, res) => {
+exports.createSession = asyncHandler(async (req, res, next) => {
+  // BUG FIX: Added missing 'next' parameter
   const doctor = await Doctor.findById(req.doctor._id);
   if (!doctor) {
     return next(
-      new ApiError(`There is no doctor for this id ${req.doctor._id}`)
+      new ApiError(`There is no doctor for this id ${req.doctor._id}`, 404)
     );
   }
 
@@ -29,7 +30,7 @@ exports.createSession = asyncHandler(async (req, res) => {
     comments: req.body.comments,
   });
 
-  res.status(200).json({ data: session });
+  res.status(201).json({ data: session });
 });
 
 /**

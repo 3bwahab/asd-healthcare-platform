@@ -63,7 +63,7 @@ exports.getAll = (Model) =>
       .filter()
       .sort()
       .limitFields()
-      .Search();
+      .search();
 
     //* Execute query
     const { mongooseQuery, pagenationResult } = apiFeatures;
