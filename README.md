@@ -142,7 +142,7 @@ The ASD Healthcare Management Platform is a production-ready RESTful API designe
 
 ```bash
 # Clone the repository
-git clone https://github.com/username/ASD_Final_Project.git
+git clone https://github.com/3bwahab/asd-healthcare-platform.git
 cd ASD_Final_Project
 
 # Install dependencies
