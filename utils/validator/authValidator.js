@@ -28,12 +28,20 @@ exports.singupForParentValidator = [
     .isMobilePhone(["ar-EG", "ar-SA"])
     .withMessage("Invaild Phone Number Only Egy _ SA Phone Numbers"),
 
-  check("password").notEmpty().withMessage("Password is required.."),
+  check("password")
+    .notEmpty()
+    .withMessage("Password is required..")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters")
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+    .withMessage(
+      "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+    ),
   check("confirmPassword")
     .notEmpty()
     .withMessage("Password Confirm is required..")
     .custom((val, { req }) => {
-      if (val != req.body.password) {
+      if (val !== req.body.password) {
         return Promise.reject(new Error("incorrect password confirmation.."));
       }
       return true;

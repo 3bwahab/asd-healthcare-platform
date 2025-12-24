@@ -17,13 +17,15 @@ const childSchema = new mongoose.Schema(
     },
 
     birthday: {
-      type: String,
+      type: Date,
       required: [true, "Child Birthday is required."],
     },
 
     age: {
-      type: String,
+      type: Number,
       required: [true, "Child Age is required."],
+      min: [0, "Age cannot be negative"],
+      max: [150, "Age must be realistic"],
     },
 
     gender: {
