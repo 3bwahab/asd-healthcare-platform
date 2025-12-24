@@ -1,0 +1,142 @@
+erDiagram
+    Parent ||--o{ Child : "has"
+    Parent ||--o{ Order : "places"
+    Parent ||--o{ Appointment : "books"
+    Parent ||--o{ Session : "attends"
+    Parent ||--o{ Review : "writes"
+
+    Doctor ||--o{ Appointment : "provides"
+    Doctor ||--o{ Session : "conducts"
+    Doctor ||--o{ Order : "receives"
+    Doctor ||--o{ Review : "receives"
+
+    Session ||--o{ SessionReview : "has"
+
+    Pharmacy ||--o{ Medicine : "stocks"
+
+    Parent {
+        ObjectId _id PK
+        string userName
+        string email UK
+        string password
+        number age
+        string phone
+        string address
+        boolean active
+        enum role
+        string image
+        number numOfChild
+        string session_id
+        date passwordChangedAt
+        date emailChangedAt
+    }
+
+    Doctor {
+        ObjectId _id PK
+        ObjectId parent FK
+        string speciailization
+        string qualifications
+        string medicalLicense
+        string address
+        string about
+        number Session_price
+        number ratingAverage
+        number ratingQuantity
+        string image
+        enum role
+    }
+
+    Child {
+        ObjectId _id PK
+        ObjectId parent FK
+        string childName
+        date birthday
+        number age
+        enum gender
+        string healthDetails
+        string autism_level
+        string degree_level
+        string image
+    }
+
+    Appointment {
+        ObjectId _id PK
+        ObjectId doctorId FK
+        ObjectId parentId FK
+        string date
+        string day
+        string time
+        enum status
+    }
+
+    Session {
+        ObjectId _id PK
+        ObjectId doctorId FK
+        ObjectId parentId FK
+        number session_number
+        string session_date
+        enum statusOfSession
+        array comments
+        array session_review
+    }
+
+    Order {
+        ObjectId _id PK
+        ObjectId parent FK
+        ObjectId doctor FK
+        object info
+        number price
+        enum paymentMethodType
+        boolean isPaid
+        date paidAt
+    }
+
+    Review {
+        ObjectId _id PK
+        ObjectId parent FK
+        ObjectId doctor FK
+        string title
+        number ratings
+        date createdAt
+    }
+
+    SessionReview {
+        ObjectId id PK
+        ObjectId parentId FK
+        number ratings
+        string title
+        date createdAt
+    }
+
+    Medicine {
+        ObjectId _id PK
+        ObjectId pharmacy FK
+        string medicineName
+        string description
+        number price
+        string image
+    }
+
+    Pharmacy {
+        ObjectId _id PK
+        string pharmacyName
+        string pharmacyAddress
+        string phone
+        string image
+    }
+
+    Charity {
+        ObjectId _id PK
+        string charityName
+        string description
+        string charityAddress
+        string phone
+        string image
+    }
+
+    Education {
+        ObjectId _id PK
+        string articleTitle
+        string content
+        string image
+    }

@@ -1,0 +1,100 @@
+sequenceDiagram
+    autonumber
+    actor Doctor
+    actor Parent
+    participant API as API Server
+    participant AppSvc as Appointment Service
+    participant DB as MongoDB
+
+    rect rgb(200, 220, 240)
+    Note over Doctor,DB: Doctor Creates Available Time Slots
+    Doctor->>+API: POST /api/v1/appointment {doctorId, availableSlots[]}
+    API->>API: Verify JWT & extract doctorId
+    API->>+AppSvc: createAppointmentSlots(doctorId, slots)
+    AppSvc->>+DB: Find doctor by ID
+    DB-->>-AppSvc: Doctor found
+
+    loop For each time slot
+        AppSvc->>+DB: Check if slot exists (doctorId, date, time)
+        DB-->>-AppSvc: Slot available
+        AppSvc->>+DB: Create appointment with status="available"
+        DB-->>-AppSvc: Appointment created
+    end
+
+    AppSvc-->>-API: Return created appointments
+    API-->>-Doctor: 201 Created - Slots created successfully
+    end
+
+    rect rgb(220, 240, 200)
+    Note over Parent,DB: Parent Views Available Appointments
+    Parent->>+API: GET /api/v1/appointment/available/{doctorId}
+    API->>+AppSvc: getAvailableAppointments(doctorId)
+    AppSvc->>+DB: Find appointments where doctorId & status="available"
+    DB-->>-AppSvc: Available appointments list
+    AppSvc-->>-API: Return available slots
+    API-->>-Parent: 200 OK - {availableSlots[]}
+    end
+
+    rect rgb(240, 220, 200)
+    Note over Parent,DB: Parent Books Appointment
+    Parent->>+API: PUT /api/v1/appointment/book/{appointmentId}
+    Note right of API: Body: {parentId, childId}
+    API->>API: Verify JWT & extract parentId
+    API->>+AppSvc: bookAppointment(appointmentId, parentId, childId)
+    AppSvc->>+DB: Find appointment by ID
+    DB-->>-AppSvc: Appointment found
+
+    alt Appointment is available
+        AppSvc->>AppSvc: Check status === "available"
+        AppSvc->>AppSvc: Set parentId, childId, status="booked"
+        AppSvc->>+DB: Update appointment
+        DB-->>-AppSvc: Appointment updated
+        AppSvc-->>-API: Booking successful
+        API-->>-Parent: 200 OK - Appointment booked
+    else Appointment already booked
+        AppSvc-->>API: Error - Slot not available
+        API-->>Parent: 400 Bad Request - Already booked
+    end
+    end
+
+    rect rgb(240, 200, 220)
+    Note over Doctor,DB: Doctor Confirms Appointment
+    Doctor->>+API: GET /api/v1/appointment/confirm/{appointmentId}
+    API->>API: Verify JWT & extract doctorId
+    API->>+AppSvc: confirmAppointment(appointmentId, doctorId)
+    AppSvc->>+DB: Find appointment by ID
+    DB-->>-AppSvc: Appointment found
+
+    alt Appointment belongs to doctor
+        AppSvc->>AppSvc: Verify doctorId matches
+        AppSvc->>AppSvc: Set status="confirmed"
+        AppSvc->>+DB: Update appointment
+        DB-->>-AppSvc: Appointment confirmed
+        AppSvc-->>-API: Confirmation successful
+        API-->>-Doctor: 200 OK - Appointment confirmed
+    else Unauthorized
+        AppSvc-->>API: Error - Not your appointment
+        API-->>Doctor: 403 Forbidden - Unauthorized
+    end
+    end
+
+    rect rgb(200, 240, 220)
+    Note over Parent,DB: Parent Cancels Appointment
+    Parent->>+API: GET /api/v1/appointment/cancel/{appointmentId}
+    API->>API: Verify JWT & extract parentId
+    API->>+AppSvc: cancelAppointment(appointmentId, parentId)
+    AppSvc->>+DB: Find appointment by ID
+    DB-->>-AppSvc: Appointment found
+
+    alt Appointment belongs to parent
+        AppSvc->>AppSvc: Verify parentId matches
+        AppSvc->>AppSvc: Set status="cancelled"
+        AppSvc->>+DB: Update appointment
+        DB-->>-AppSvc: Appointment cancelled
+        AppSvc-->>-API: Cancellation successful
+        API-->>-Parent: 200 OK - Appointment cancelled
+    else Unauthorized
+        AppSvc-->>API: Error - Not your appointment
+        API-->>Parent: 403 Forbidden - Unauthorized
+    end
+    end

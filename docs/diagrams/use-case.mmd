@@ -1,0 +1,135 @@
+graph TB
+    subgraph Actors
+        Parent[("Parent/User")]
+        Doctor[("Doctor")]
+        Admin[("Admin")]
+    end
+
+    subgraph "Authentication & Account Management"
+        UC1[Register Account]
+        UC2[Login]
+        UC3[Verify Email]
+        UC4[Reset Password]
+        UC5[Update Profile]
+        UC6[Change Password]
+    end
+
+    subgraph "Child Management"
+        UC7[Add Child Profile]
+        UC8[View Children]
+        UC9[Update Child Info]
+        UC10[Delete Child]
+    end
+
+    subgraph "Appointment Management"
+        UC11[View Available Slots]
+        UC12[Book Appointment]
+        UC13[Cancel Appointment]
+        UC14[Confirm Appointment]
+        UC15[Create Time Slots]
+        UC16[View My Appointments]
+    end
+
+    subgraph "AI Screening & Assessment"
+        UC17[View Screening Questions]
+        UC18[Submit Answers]
+        UC19[Get AI Prediction]
+        UC20[View Assessment History]
+    end
+
+    subgraph "Session Management"
+        UC21[Create Session]
+        UC22[View Sessions]
+        UC23[Add Session Comments]
+        UC24[Submit Session Review]
+        UC25[View Session Reviews]
+    end
+
+    subgraph "Payment & Orders"
+        UC26[Create Checkout Session]
+        UC27[Process Payment]
+        UC28[View Order History]
+        UC29[Handle Webhook]
+    end
+
+    subgraph "Reviews & Ratings"
+        UC30[Write Doctor Review]
+        UC31[View Doctor Reviews]
+        UC32[Update Review]
+        UC33[Delete Review]
+    end
+
+    subgraph "Healthcare Resources"
+        UC34[Browse Educational Articles]
+        UC35[Search Medicines]
+        UC36[Find Pharmacies]
+        UC37[View Charities]
+    end
+
+    %% Parent Use Cases
+    Parent --> UC1
+    Parent --> UC2
+    Parent --> UC3
+    Parent --> UC4
+    Parent --> UC5
+    Parent --> UC6
+    Parent --> UC7
+    Parent --> UC8
+    Parent --> UC9
+    Parent --> UC10
+    Parent --> UC11
+    Parent --> UC12
+    Parent --> UC13
+    Parent --> UC16
+    Parent --> UC17
+    Parent --> UC18
+    Parent --> UC19
+    Parent --> UC20
+    Parent --> UC22
+    Parent --> UC24
+    Parent --> UC25
+    Parent --> UC26
+    Parent --> UC27
+    Parent --> UC28
+    Parent --> UC30
+    Parent --> UC31
+    Parent --> UC34
+    Parent --> UC35
+    Parent --> UC36
+    Parent --> UC37
+
+    %% Doctor Use Cases
+    Doctor --> UC1
+    Doctor --> UC2
+    Doctor --> UC3
+    Doctor --> UC4
+    Doctor --> UC5
+    Doctor --> UC6
+    Doctor --> UC15
+    Doctor --> UC14
+    Doctor --> UC16
+    Doctor --> UC21
+    Doctor --> UC22
+    Doctor --> UC23
+    Doctor --> UC25
+    Doctor --> UC29
+    Doctor --> UC31
+
+    %% Admin Use Cases
+    Admin --> UC2
+    Admin --> UC34
+    Admin --> UC35
+    Admin --> UC36
+    Admin --> UC37
+
+    %% Dependencies
+    UC12 -.depends on.-> UC11
+    UC18 -.depends on.-> UC17
+    UC19 -.depends on.-> UC18
+    UC24 -.depends on.-> UC22
+    UC27 -.depends on.-> UC26
+    UC30 -.depends on.-> UC16
+
+    style Parent fill:#4A90E2,stroke:#2E5C8A,color:#fff
+    style Doctor fill:#50C878,stroke:#2E7D52,color:#fff
+    style Admin fill:#FF6B6B,stroke:#C23B3B,color:#fff
