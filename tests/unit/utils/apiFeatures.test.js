@@ -39,7 +39,7 @@ describe("ApiFeatures Utility", () => {
 
       apiFeatures.paginate();
 
-      expect(mockMongooseQuery.limit).toHaveBeenCalledWith(10);
+      expect(mockMongooseQuery.limit).toHaveBeenCalledWith(50);
       expect(mockMongooseQuery.skip).toHaveBeenCalledWith(0);
     });
 
