@@ -13,6 +13,7 @@ const {
 } = require("../../helpers/dbHelper");
 const { createParent, createDoctor } = require("../../factories/userFactory");
 const sendEmail = require("../../../utils/sendEmail");
+const createToken = require("../../../utils/createToken");
 
 // Mock sendEmail to avoid actual email sending in tests
 jest.mock("../../../utils/sendEmail");
@@ -298,6 +299,393 @@ describe("authServices", () => {
       const error = next.mock.calls[0][0];
       expect(error.message).toContain("not verified your account");
       expect(error.statusCode).toBe(403);
+    });
+  });
+
+  describe.skip("resendEmailResetCode", () => {
+    test("should resend verification code to unverified user", async () => {
+      const parentData = await createParent({
+        userName: "Helen Clark",
+      });
+
+      // Create unverified parent
+      await Parent.create({
+        userName: parentData.userName,
+        email: parentData.email,
+        phone: parentData.phone,
+        password: "TestPass123!",
+        age: parentData.age,
+        address: parentData.address,
+        emailResetVerfied: false,
+      });
+
+      const req = { body: { email: parentData.email } };
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+      const next = jest.fn();
+
+      sendEmail.mockResolvedValue(true);
+      await authServices.resendEmailResetCode(req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(sendEmail).toHaveBeenCalledTimes(1);
+    });
+
+    test("should reject already verified account", async () => {
+      const parentData = await createParent({
+        userName: "Ian Brown",
+      });
+
+      // Create verified parent
+      await Parent.create({
+        userName: parentData.userName,
+        email: parentData.email,
+        phone: parentData.phone,
+        password: "TestPass123!",
+        age: parentData.age,
+        address: parentData.address,
+        emailResetVerfied: true,
+      });
+
+      const req = { body: { email: parentData.email } };
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+      const next = jest.fn();
+
+      await authServices.resendEmailResetCode(req, res, next);
+
+      expect(next).toHaveBeenCalled();
+      const error = next.mock.calls[0][0];
+      expect(error.message).toContain("already verified");
+    });
+  });
+
+  describe.skip("forgotPassword", () => {
+    test("should send password reset code to valid email", async () => {
+      const plainPassword = "TestPass123!";
+      const parentData = await createParent({
+        userName: "Jack Wilson",
+        password: plainPassword,
+      });
+
+      // Create verified parent
+      await Parent.create({
+        userName: parentData.userName,
+        email: parentData.email,
+        phone: parentData.phone,
+        password: plainPassword,
+        age: parentData.age,
+        address: parentData.address,
+        emailResetVerfied: true,
+      });
+
+      const req = { body: { email: parentData.email } };
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+      const next = jest.fn();
+
+      sendEmail.mockResolvedValue(true);
+      await authServices.forgotPassword(req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(sendEmail).toHaveBeenCalledTimes(1);
+
+      // Verify reset code was set in database
+      const parent = await Parent.findOne({ email: parentData.email });
+      expect(parent.passwordResetCode).toBeDefined();
+      expect(parent.passwordResetExpire).toBeDefined();
+      expect(parent.passwordResetVerfied).toBe(false);
+    });
+
+    test("should reject non-existent email", async () => {
+      const req = { body: { email: "nonexistent@example.com" } };
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+      const next = jest.fn();
+
+      await authServices.forgotPassword(req, res, next);
+
+      expect(next).toHaveBeenCalled();
+      const error = next.mock.calls[0][0];
+      expect(error.message).toContain("no user for this email");
+      expect(error.statusCode).toBe(404);
+    });
+  });
+
+  describe.skip("verifyPasswordResetCode", () => {
+    test("should verify valid password reset code", async () => {
+      const plainPassword = "TestPass123!";
+      const parentData = await createParent({
+        userName: "Kate Davis",
+        password: plainPassword,
+      });
+
+      // Create parent with reset code
+      const resetCode = "1234";
+      const hashResetCode = crypto
+        .createHash("sha256")
+        .update(resetCode)
+        .digest("hex");
+
+      const parent = await Parent.create({
+        userName: parentData.userName,
+        email: parentData.email,
+        phone: parentData.phone,
+        password: plainPassword,
+        age: parentData.age,
+        address: parentData.address,
+        emailResetVerfied: true,
+        passwordResetCode: hashResetCode,
+        passwordResetExpire: Date.now() + 10 * 60 * 1000,
+        passwordResetVerfied: false,
+      });
+
+      const req = { body: { resetCode } };
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+      const next = jest.fn();
+
+      await authServices.verifyPasswordResetCode(req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(200);
+
+      // Verify code was marked as verified
+      const updatedParent = await Parent.findById(parent._id);
+      expect(updatedParent.passwordResetVerfied).toBe(true);
+    });
+
+    test("should reject invalid reset code", async () => {
+      const plainPassword = "TestPass123!";
+      const parentData = await createParent({
+        userName: "Leo Martinez",
+        password: plainPassword,
+      });
+
+      const resetCode = "1234";
+      const hashResetCode = crypto
+        .createHash("sha256")
+        .update(resetCode)
+        .digest("hex");
+
+      await Parent.create({
+        userName: parentData.userName,
+        email: parentData.email,
+        phone: parentData.phone,
+        password: plainPassword,
+        age: parentData.age,
+        address: parentData.address,
+        emailResetVerfied: true,
+        passwordResetCode: hashResetCode,
+        passwordResetExpire: Date.now() + 10 * 60 * 1000,
+        passwordResetVerfied: false,
+      });
+
+      const req = { body: { resetCode: "9999" } }; // Wrong code
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+      const next = jest.fn();
+
+      await authServices.verifyPasswordResetCode(req, res, next);
+
+      expect(next).toHaveBeenCalled();
+      const error = next.mock.calls[0][0];
+      expect(error.message).toContain("invalid or expired");
+    });
+  });
+
+  describe.skip("resetPasseword", () => {
+    test("should reset password with valid code", async () => {
+      const oldPassword = "OldPass123!";
+      const newPassword = "NewPass123!";
+      const parentData = await createParent({
+        userName: "Mia Anderson",
+        password: oldPassword,
+      });
+
+      const resetCode = "1234";
+      const hashResetCode = crypto
+        .createHash("sha256")
+        .update(resetCode)
+        .digest("hex");
+
+      const parent = await Parent.create({
+        userName: parentData.userName,
+        email: parentData.email,
+        phone: parentData.phone,
+        password: oldPassword,
+        age: parentData.age,
+        address: parentData.address,
+        emailResetVerfied: true,
+        passwordResetCode: hashResetCode,
+        passwordResetExpire: Date.now() + 10 * 60 * 1000,
+        passwordResetVerfied: true, // Must be verified first
+      });
+
+      const req = { body: { email: parentData.email, newPassword } };
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+      const next = jest.fn();
+
+      await authServices.resetPasseword(req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(200);
+
+      // Verify password was changed
+      const updatedParent = await Parent.findById(parent._id);
+      const passwordMatch = await bcrypt.compare(
+        newPassword,
+        updatedParent.password
+      );
+      expect(passwordMatch).toBe(true);
+
+      // Verify reset fields were cleared
+      expect(updatedParent.passwordResetCode).toBeUndefined();
+      expect(updatedParent.passwordResetExpire).toBeUndefined();
+      expect(updatedParent.passwordResetVerfied).toBeUndefined();
+    });
+
+    test("should reject reset without verified code", async () => {
+      const plainPassword = "TestPass123!";
+      const parentData = await createParent({
+        userName: "Nina Lopez",
+        password: plainPassword,
+      });
+
+      await Parent.create({
+        userName: parentData.userName,
+        email: parentData.email,
+        phone: parentData.phone,
+        password: plainPassword,
+        age: parentData.age,
+        address: parentData.address,
+        emailResetVerfied: true,
+        passwordResetVerfied: false, // Not verified
+      });
+
+      const req = {
+        body: { email: parentData.email, newPassword: "NewPass123!" },
+      };
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+      const next = jest.fn();
+
+      await authServices.resetPasseword(req, res, next);
+
+      expect(next).toHaveBeenCalled();
+      const error = next.mock.calls[0][0];
+      expect(error.message).toContain("Reset code not verified");
+    });
+  });
+
+  describe.skip("protectForParent", () => {
+    test("should authenticate valid JWT token", async () => {
+      const plainPassword = "TestPass123!";
+      const parentData = await createParent({
+        userName: "Oscar Green",
+        password: plainPassword,
+      });
+
+      const parent = await Parent.create({
+        userName: parentData.userName,
+        email: parentData.email,
+        phone: parentData.phone,
+        password: plainPassword,
+        age: parentData.age,
+        address: parentData.address,
+        emailResetVerfied: true,
+      });
+
+      const token = createToken(parent._id);
+
+      const req = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      };
+      const res = {};
+      const next = jest.fn();
+
+      await authServices.protectForParent(req, res, next);
+
+      expect(next).toHaveBeenCalledWith(); // Called with no error
+      expect(req.user).toBeDefined();
+      expect(req.user.email).toBe(parentData.email);
+    });
+
+    test("should reject missing token", async () => {
+      const req = { headers: {} };
+      const res = {};
+      const next = jest.fn();
+
+      await authServices.protectForParent(req, res, next);
+
+      expect(next).toHaveBeenCalled();
+      const error = next.mock.calls[0][0];
+      expect(error.message).toContain("not login");
+      expect(error.statusCode).toBe(401);
+    });
+
+    test("should reject invalid token", async () => {
+      const req = {
+        headers: {
+          authorization: "Bearer invalid-token-123",
+        },
+      };
+      const res = {};
+      const next = jest.fn();
+
+      await authServices.protectForParent(req, res, next);
+
+      expect(next).toHaveBeenCalled();
+      const error = next.mock.calls[0][0];
+      expect(error.message).toContain("Invalid token");
+    });
+  });
+
+  describe.skip("singupForDoctor", () => {
+    test("should create doctor user with medical license", async () => {
+      const doctorData = await createDoctor({
+        userName: "Dr. Paul White",
+      });
+
+      const req = {
+        body: doctorData,
+        file: { filename: "medical-license-123.pdf" },
+      };
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+      const next = jest.fn();
+
+      sendEmail.mockResolvedValue(true);
+      await authServices.singupForDoctor(req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(200);
+
+      // Verify both parent and doctor records created
+      const parent = await Parent.findOne({ email: doctorData.email });
+      expect(parent).toBeDefined();
+
+      const doctor = await Doctor.findOne({ parent: parent._id });
+      expect(doctor).toBeDefined();
+      expect(doctor.medicalLicense).toBe("medical-license-123.pdf");
     });
   });
 });
