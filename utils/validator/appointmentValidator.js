@@ -1,6 +1,7 @@
 const { check } = require("express-validator");
 
-const validatorMiddlware = require("../../middlware/validatorMiddlware");
+const validatorMiddlware = require("../../middleware/validatorMiddleware");
+
 exports.createAppointmentValidator = [
   check("availableSlots")
     .notEmpty()

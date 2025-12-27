@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const Parent = require("../models/parentModel");
+const Parent = require("./parentModel");
 
 const childSchema = new mongoose.Schema(
   {
@@ -56,11 +56,11 @@ const childSchema = new mongoose.Schema(
 
 childSchema.statics.calcNumOfChild = async function (parentId) {
   const result = await this.aggregate([
-    //Stage 1-get all reviews in specific product
+    // Stage 1-get all reviews in specific product
     {
       $match: { parent: parentId },
     },
-    //Stage 2-groping reviews based on doctorId and calc(avgRatings, ratingsQuantity)
+    // Stage 2-groping reviews based on doctorId and calc(avgRatings, ratingsQuantity)
     {
       $group: {
         _id: "parent",

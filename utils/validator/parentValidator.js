@@ -1,7 +1,7 @@
 const { check } = require("express-validator");
 const bcrypt = require("bcryptjs");
 
-const validatorMiddlware = require("../../middlware/validatorMiddlware");
+const validatorMiddlware = require("../../middleware/validatorMiddleware");
 const Parent = require("../../models/parentModel");
 
 exports.createParentValidator = [
@@ -89,7 +89,7 @@ exports.changePasswordValidator = [
     .notEmpty()
     .withMessage("Password is required..")
     .custom(async (val, { req }) => {
-      //*1-Verify current password
+      //* 1-Verify current password
       const parent = await Parent.findById(req.params.id);
       if (!parent) {
         throw new Error(`There is no parent for this id:${req.params.id}`);
@@ -101,7 +101,7 @@ exports.changePasswordValidator = [
       if (!isCorrectPassword) {
         throw new Error(`Current Password Incorrect`);
       }
-      //*2-verify Password confirm
+      //* 2-verify Password confirm
       if (val != req.body.confirmPassword) {
         throw new Error("Confirm Password Incorrect");
       }
@@ -128,7 +128,7 @@ exports.changeLoggedParentPasswordValidator = [
     .notEmpty()
     .withMessage("Password is required..")
     .custom(async (val, { req }) => {
-      //*1-Verify current password
+      //* 1-Verify current password
       const parent = await Parent.findById(req.parent._id);
       if (!parent) {
         throw new Error(`There is no parent for this id:${req.parent._id}`);
@@ -140,7 +140,7 @@ exports.changeLoggedParentPasswordValidator = [
       if (!isCorrectPassword) {
         throw new Error(`Current Password Incorrect`);
       }
-      //*2-verify Password confirm
+      //* 2-verify Password confirm
       if (val != req.body.confirmPassword) {
         throw new Error("Confirm Password Incorrect");
       }

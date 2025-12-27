@@ -7,7 +7,7 @@ const Education = require("../models/educationModel");
 const Parent = require("../models/parentModel");
 const { cloudinaryConfig } = require("../utils/cloudinary");
 
-//*1- DiskStorage engine
+//* 1- DiskStorage engine
 const multerStorageForImage = multer.diskStorage({});
 
 const multerFilterForImage = function (req, file, cb) {

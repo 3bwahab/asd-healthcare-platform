@@ -1,5 +1,5 @@
 const { check } = require("express-validator");
-const validatorMiddleware = require("../../middlware/validatorMiddlware");
+const validatorMiddleware = require("../../middleware/validatorMiddleware");
 
 exports.createCharityValidator = [
   check("charity_name").notEmpty().withMessage("Charity name is required"),

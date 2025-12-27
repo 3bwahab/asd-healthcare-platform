@@ -1,6 +1,6 @@
 const { check } = require("express-validator");
 
-const validatorMiddlware = require("../../middlware/validatorMiddlware");
+const validatorMiddlware = require("../../middleware/validatorMiddleware");
 const Pharmacy = require("../../models/pharmacyModel");
 
 exports.createPharmacyValidator = [

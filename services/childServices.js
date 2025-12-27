@@ -23,7 +23,7 @@ exports.createFilterObj = (req, res, next) => {
  * @access private/Child
  */
 
-//--updated
+// --updated
 exports.createChild = asyncHandler(async (req, res, next) => {
   const parent = await Parent.findById(req.parent._id);
   if (!parent) {

@@ -8,14 +8,14 @@ const {
   deleteSpecificMedican,
   uploadToCaloud,
   uploadMedicanImage,
-} = require("../services/medicanServices ");
+} = require("../services/medicineServices");
 
 const {
   createMedicanValidator,
   deleteMedicanValidator,
   getMedicanValidator,
   updateMedicanValidator,
-} = require("../utils/validator/medicanValidator ");
+} = require("../utils/validator/medicineValidator");
 
 const AuthServices = require("../services/authServices");
 

@@ -51,7 +51,7 @@ const clearDatabase = async () => {
     return;
   }
 
-  const collections = mongoose.connection.collections;
+  const {collections} = mongoose.connection;
 
   for (const key in collections) {
     const collection = collections[key];
@@ -69,7 +69,7 @@ const dropCollections = async () => {
     return;
   }
 
-  const collections = mongoose.connection.collections;
+  const {collections} = mongoose.connection;
 
   for (const key in collections) {
     const collection = collections[key];

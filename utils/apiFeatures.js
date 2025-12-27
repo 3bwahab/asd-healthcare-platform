@@ -54,7 +54,7 @@ class ApiFeatures {
    */
   limitFields() {
     if (this.queryString.fields) {
-      let fields = this.queryString.fields.split(",").join(" ");
+      const fields = this.queryString.fields.split(",").join(" ");
       this.mongooseQuery = this.mongooseQuery.select(fields);
     } else {
       this.mongooseQuery = this.mongooseQuery.select("-__v");
@@ -69,7 +69,7 @@ class ApiFeatures {
    */
   search() {
     if (this.queryString.keyword) {
-      let query = {};
+      const query = {};
       query.$or = [
         { address: { $regex: this.queryString.keyword, $options: "i" } },
         {

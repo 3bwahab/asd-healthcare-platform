@@ -9,7 +9,7 @@ const Parent = require("../models/parentModel");
 const createToken = require("../utils/createToken");
 const factory = require("./handlersFactory");
 
-//*1- DiskStorage engine
+//* 1- DiskStorage engine
 const multerStorage = multer.diskStorage({});
 
 const multerFilter = function (req, file, cb) {
@@ -84,7 +84,7 @@ exports.deleteAllParent = asyncHandler(async (req, res, next) => {
  * @access private/user
  */
 exports.changePassword = asyncHandler(async (req, res, next) => {
-  const id = req.params.id;
+  const {id} = req.params;
   const parent = await Parent.findByIdAndUpdate(
     id,
     {

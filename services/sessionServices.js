@@ -63,7 +63,7 @@ exports.updateSpecificSession = factory.updateOne(Session);
 
 exports.deleteSpecificSession = factory.deleteOne(Session);
 
-//**-------------------------------------------------------------- */
+//* *-------------------------------------------------------------- */
 
 //* For Parent
 
@@ -130,7 +130,7 @@ exports.getAllSessionForSpecificParentByStatus = asyncHandler(
   }
 );
 
-//*------------------------------------------------------------------------------------- */
+//* ------------------------------------------------------------------------------------- */
 
 //* For Doctor
 
@@ -197,7 +197,7 @@ exports.getAllSessionForSpecificDoctor = asyncHandler(
 
 //* Add Comment to Session
 exports.addCommentToSpecificSession = asyncHandler(async (req, res, next) => {
-  const comment = req.body.comment;
+  const {comment} = req.body;
   const { sessionId } = req.params;
   const session = await Session.findById(sessionId);
   if (!session) {

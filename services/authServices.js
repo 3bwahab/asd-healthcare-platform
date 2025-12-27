@@ -14,7 +14,7 @@ const sendEmail = require("../utils/sendEmail");
 
 const createToken = require("../utils/createToken");
 
-//******* Authentication For User */
+//* ****** Authentication For User */
 
 /**
  * Singup For User
@@ -64,7 +64,7 @@ const createToken = require("../utils/createToken");
 // });
 
 exports.singupForParent = asyncHandler(async (req, res, next) => {
-  //*1- create User
+  //* 1- create User
   const parent = await Parent.create({
     userName: req.body.userName,
     email: req.body.email,
@@ -89,8 +89,8 @@ exports.singupForParent = asyncHandler(async (req, res, next) => {
   parent.emailResetVerfied = false;
   await parent.save();
 
-  //*1-Send reset Code To email in body
-  let message = `Hi ${parent.userName},\n We received a request to reset the Email on your ASD Account. \n ${resetCode} \n Enter this code to complete the reset. \n Thanks for helping us keep your account secure.\n The ASD Team`;
+  //* 1-Send reset Code To email in body
+  const message = `Hi ${parent.userName},\n We received a request to reset the Email on your ASD Account. \n ${resetCode} \n Enter this code to complete the reset. \n Thanks for helping us keep your account secure.\n The ASD Team`;
 
   try {
     await sendEmail({
@@ -112,7 +112,7 @@ exports.singupForParent = asyncHandler(async (req, res, next) => {
     return next(new ApiError(`There is an error in sending email`, 500));
   }
 
-  //*2-Generate Token
+  //* 2-Generate Token
   const token = createToken(parent._id);
 
   res.status(200).json({
@@ -122,7 +122,7 @@ exports.singupForParent = asyncHandler(async (req, res, next) => {
 });
 
 exports.resendEmailResetCode = asyncHandler(async (req, res, next) => {
-  const email = req.parent.email;
+  const {email} = req.parent;
 
   const parent = await Parent.findOne({ email });
   if (!parent) {
@@ -171,7 +171,7 @@ exports.resendEmailResetCode = asyncHandler(async (req, res, next) => {
  */
 
 exports.verifyEmailResetCode = asyncHandler(async (req, res, next) => {
-  //*1-Get user based on reset code
+  //* 1-Get user based on reset code
   const hashResetCode = crypto
     .createHash("sha256")
     .update(req.body.resetCode)
@@ -193,7 +193,7 @@ exports.verifyEmailResetCode = asyncHandler(async (req, res, next) => {
 
 //*
 exports.protectForParent = asyncHandler(async (req, res, next) => {
-  //1-check if token exist , if exist get it
+  // 1-check if token exist , if exist get it
   let token;
   if (
     req.headers.authorization &&
@@ -206,10 +206,10 @@ exports.protectForParent = asyncHandler(async (req, res, next) => {
       new ApiError("you are not login, please login to access this route", 401)
     );
   }
-  //2-verify token (no change happens ,expired token )
+  // 2-verify token (no change happens ,expired token )
   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
-  //3-check if user exsits
+  // 3-check if user exsits
   const currentParent = await Parent.findById(decoded.userId);
   if (!currentParent) {
     return next(
@@ -240,9 +240,9 @@ exports.protectForParent = asyncHandler(async (req, res, next) => {
   next();
 });
 
-//******* Authentication For Doctor */
+//* ****** Authentication For Doctor */
 
-//*2- memoryStorage engine
+//* 2- memoryStorage engine
 //* For Pdf
 const multerStorageForPdf = multer.diskStorage({});
 const multerFilterForPdf = function (req, file, cb) {
@@ -337,7 +337,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 });
 
 exports.protectForDoctor = asyncHandler(async (req, res, next) => {
-  //1-check if token exist , if exist get it
+  // 1-check if token exist , if exist get it
   let token;
   if (
     req.headers.authorization &&
@@ -351,10 +351,10 @@ exports.protectForDoctor = asyncHandler(async (req, res, next) => {
     );
   }
 
-  //2-verify token (no change happens ,expired token )
+  // 2-verify token (no change happens ,expired token )
   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
-  //3-check if user exsits
+  // 3-check if user exsits
   const currentDoctor = await Doctor.findById(decoded.userId);
   if (!currentDoctor) {
     return next(
@@ -388,7 +388,7 @@ exports.protectForDoctor = asyncHandler(async (req, res, next) => {
 });
 
 // @desc:  Authorization[user Permission]
-//["manger","admin"]
+// ["manger","admin"]
 exports.allowedToParent = (...roles) =>
   asyncHandler(async (req, res, next) => {
     if (!roles.includes(req.parent.role)) {
@@ -412,14 +412,14 @@ exports.allowedToForDoctor = (...roles) =>
  * @access public/parent
  */
 exports.forgotPassword = asyncHandler(async (req, res, next) => {
-  //*1- Get User by email
+  //* 1- Get User by email
   const parent = await Parent.findOne({ email: req.body.email });
   if (!parent) {
     return next(
       new ApiError(`There is no user for this email ${req.body.email}`, 404)
     );
   }
-  //*2-if user exist, Generate reset random 6 digit and save it in
+  //* 2-if user exist, Generate reset random 6 digit and save it in
   const resetCode = Math.floor(1000 + Math.random() * 9000).toString();
   const hashResetCode = crypto
     .createHash("sha256")
@@ -433,8 +433,8 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
   parent.passwordResetVerfied = false;
   parent.save();
-  //*3-send the reset code via email
-  let message = `Hi ${parent.userName},\n We received a request to reset the password on your ASD Account. \n ${resetCode} \n Enter this code to complete the reset. \n Thanks for helping us keep your account secure.\n The ASD Team`;
+  //* 3-send the reset code via email
+  const message = `Hi ${parent.userName},\n We received a request to reset the password on your ASD Account. \n ${resetCode} \n Enter this code to complete the reset. \n Thanks for helping us keep your account secure.\n The ASD Team`;
 
   try {
     await sendEmail({
@@ -463,7 +463,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 });
 
 exports.resendResetCode = asyncHandler(async (req, res, next) => {
-  const email = req.email;
+  const {email} = req;
 
   const parent = await Parent.findOne({ email });
   if (!parent) {
@@ -507,7 +507,7 @@ exports.resendResetCode = asyncHandler(async (req, res, next) => {
  * @access public/parent
  */
 exports.verifyPasswordResetCode = asyncHandler(async (req, res, next) => {
-  //*1-Get user based on reset code
+  //* 1-Get user based on reset code
 
   const hashResetCode = crypto
     .createHash("sha256")

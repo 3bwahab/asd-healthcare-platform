@@ -4,7 +4,7 @@
  */
 
 const sessionReviewServices = require("../../../services/sessionReviewServices");
-const Session = require("../../../models/SessionModel");
+const Session = require("../../../models/sessionModel");
 const Parent = require("../../../models/parentModel");
 const Doctor = require("../../../models/doctorModel");
 const Child = require("../../../models/childModel"); // Import Child model to avoid schema error

@@ -30,6 +30,7 @@ const {
   changeLoggedParentPasswordValidator,
   updateLoggedParentDataValidator,
 } = require("../utils/validator/parentValidator");
+
 const router = express();
 
 //* Nested Route
@@ -78,7 +79,7 @@ router
     activateLoggedParentData
   );
 
-//*Admin
+//* Admin
 // router.use(AuthServices.protectForUser, AuthServices.allowedToParent("admin"));
 router
   .route("/")

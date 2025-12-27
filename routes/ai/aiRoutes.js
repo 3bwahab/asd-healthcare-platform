@@ -14,7 +14,7 @@ const {
   getChatHistory,
   getAustesmHistory,
   getDegreeHistory,
-} = require("../../services/AiSerives/aiServices");
+} = require("../../services/aiServices/aiServices");
 
 const AuthServices = require("../../services/authServices");
 

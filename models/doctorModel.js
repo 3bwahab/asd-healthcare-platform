@@ -18,7 +18,7 @@ const doctorSchema = new mongoose.Schema(
       required: [true, "Doctor Qualifications Required.."],
     },
 
-    //*medicalLicense we need to upload medicalLicense as pdf
+    //* medicalLicense we need to upload medicalLicense as pdf
     medicalLicense: {
       type: String,
       required: [true, "Doctor Medical License Required.."],
@@ -29,7 +29,7 @@ const doctorSchema = new mongoose.Schema(
       required: [true, "Doctor Session Price Required.."],
     },
 
-    //**
+    //* *
     availableDays: [{ type: String }], // e.g., ["Monday", "Wednesday", "Friday"]
 
     //* Review

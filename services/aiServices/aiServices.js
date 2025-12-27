@@ -6,8 +6,8 @@ const FormData = require("form-data");
 const { v4: uuidv4 } = require("uuid");
 
 const ApiError = require("../../utils/apiError");
-const Question = require("../../models/Ai/questionModel1");
-const QuestionDegree = require("../../models/Ai/questionDegreeModel1");
+const Question = require("../../models/Ai/questionModel");
+const QuestionDegree = require("../../models/Ai/questionDegreeModel");
 const Answer = require("../../models/Ai/answerModel");
 const AnswerDegree = require("../../models/Ai/answerDegreeModel");
 const Prediction = require("../../models/Ai/predictionModel");
@@ -29,7 +29,7 @@ const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
 exports.uploadAudio = upload.single("audio");
 //*------------------------------------------------------------------------
 
-const FASTAPI_URL = process.env.FASTAPI_URL;
+const {FASTAPI_URL} = process.env;
 
 const getQuestionFromAPI = async (index, type) => {
   const url =
@@ -220,7 +220,7 @@ exports.finalPrediction = asyncHandler(async (req, res, next) => {
   });
 
   await predDoc.save();
-  const data = prediction.data;
+  const {data} = prediction;
 
   res.json({
     message: "Final prediction autism done.",
@@ -514,7 +514,7 @@ exports.saveChatWithAI = asyncHandler(async (req, res, next) => {
   });
 });
 
-//*---Chat History--------------
+//* ---Chat History--------------
 
 exports.getChatHistory = asyncHandler(async (req, res, next) => {
   const { session_id } = req.params;

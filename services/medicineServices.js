@@ -1,13 +1,13 @@
 const asyncHandler = require("express-async-handler");
 
+const multer = require("multer");
 const Medican = require("../models/medicanModel");
 const factory = require("./handlersFactory");
 
-const multer = require("multer");
 
 const { cloudinaryConfig } = require("../utils/cloudinary");
 
-//*1- DiskStorage engine
+//* 1- DiskStorage engine
 const multerStorageForImage = multer.diskStorage({});
 
 const multerFilterForImage = function (req, file, cb) {
