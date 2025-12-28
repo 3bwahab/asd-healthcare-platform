@@ -57,7 +57,7 @@ const sessionSchema = new mongoose.Schema(
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-//nested populate
+// nested populate
 sessionSchema.pre(/^find/, function (next) {
   this.populate({
     path: "parentId",
@@ -70,7 +70,7 @@ sessionSchema.pre(/^find/, function (next) {
   next();
 });
 
-//nested populate
+// nested populate
 sessionSchema.pre(/^find/, function (next) {
   this.populate({
     path: "doctorId",

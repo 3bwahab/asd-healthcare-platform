@@ -6,14 +6,13 @@ const FormData = require("form-data");
 const { v4: uuidv4 } = require("uuid");
 
 const ApiError = require("../../utils/apiError");
-const Question = require("../../models/Ai/questionModel1");
-const QuestionDegree = require("../../models/Ai/questionDegreeModel1");
+const Question = require("../../models/Ai/questionModel");
+const QuestionDegree = require("../../models/Ai/questionDegreeModel");
 const Answer = require("../../models/Ai/answerModel");
 const AnswerDegree = require("../../models/Ai/answerDegreeModel");
 const Prediction = require("../../models/Ai/predictionModel");
 const chatSession = require("../../models/Ai/chatSessionModel");
 const Child = require("../../models/childModel");
-const Parent = require("../../models/parentModel");
 
 const multerStorage = multer.memoryStorage();
 
@@ -29,7 +28,7 @@ const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
 exports.uploadAudio = upload.single("audio");
 //*------------------------------------------------------------------------
 
-const FASTAPI_URL = process.env.FASTAPI_URL;
+const {FASTAPI_URL} = process.env;
 
 const getQuestionFromAPI = async (index, type) => {
   const url =
@@ -47,7 +46,7 @@ const getQuestionFromAPI = async (index, type) => {
 //---------------------------------------------
 //* Get Qustion
 exports.getQustion = asyncHandler(async (req, res, next) => {
-  const index = parseInt(req.params.index);
+  const index = parseInt(req.params.index, 10);
   let q = await Question.findOne({ type: "screening", index });
 
   if (!q || !q.text) {
@@ -66,7 +65,8 @@ exports.getQustion = asyncHandler(async (req, res, next) => {
 //---------------------------------------------
 // [1] Check Relevance of Answer (text or audio)
 exports.checkRelevance = asyncHandler(async (req, res, next) => {
-  let { index, answer } = req.body;
+  const { index } = req.body;
+  let { answer } = req.body;
 
   if (!answer && req.file) {
     const form = new FormData();
@@ -220,7 +220,7 @@ exports.finalPrediction = asyncHandler(async (req, res, next) => {
   });
 
   await predDoc.save();
-  const data = prediction.data;
+  const {data} = prediction;
 
   res.json({
     message: "Final prediction autism done.",
@@ -232,7 +232,7 @@ exports.finalPrediction = asyncHandler(async (req, res, next) => {
 
 //* Get Qustion
 exports.getQustionDegree = asyncHandler(async (req, res, next) => {
-  const index = parseInt(req.params.index);
+  const index = parseInt(req.params.index, 10);
   let q = await QuestionDegree.findOne({ type: "degree", index });
 
   if (!q || !q.text) {
@@ -252,7 +252,8 @@ exports.getQustionDegree = asyncHandler(async (req, res, next) => {
 
 // * Check Relevance for Degree Questions
 exports.checkRelevanceDegree = asyncHandler(async (req, res, next) => {
-  let { index, answer } = req.body;
+  const { index } = req.body;
+  let { answer } = req.body;
 
   // If no answer text and audio file exists, transcribe audio
   if (!answer && req.file) {
@@ -440,32 +441,43 @@ exports.getAudio = asyncHandler(async (req, res, next) => {
     contentType: req.file.mimetype,
   });
 
-  const { data } = await axios.post(`${FASTAPI_URL}/transcribe_audio`, form, {
-    headers: {
-      ...form.getHeaders(),
-    },
-  });
-  if (!data) {
+  try {
+    const { data } = await axios.post(`${FASTAPI_URL}/transcribe_audio`, form, {
+      headers: {
+        ...form.getHeaders(),
+      },
+    });
+    if (!data) {
+      return next(
+        new ApiError("Error transcribing audio", 500)
+      );
+    }
+    // console.log(data.transcribed_text);
+
+    res.json({ data });
+  } catch (err) {
     return next(
-      new ApiError(`Error transcribing audio: ${error.message}`, 500)
+      new ApiError(`Error transcribing audio: ${err.message}`, 500)
     );
   }
-  // console.log(data.transcribed_text);
-
-  res.json({ data });
 });
 
 //*-------------------------------------------------------
 //* chatbot session
 // POST /chat
 exports.saveChatWithAI = asyncHandler(async (req, res, next) => {
+  // eslint-disable-next-line camelcase
   let session_id = "";
 
+  // eslint-disable-next-line camelcase
   if (!req.parent.session_id) {
+    // eslint-disable-next-line camelcase
     session_id = uuidv4();
+    // eslint-disable-next-line camelcase
     req.parent.session_id = session_id;
     await req.parent.save();
   } else {
+    // eslint-disable-next-line camelcase, prefer-destructuring
     session_id = req.parent.session_id;
   }
 
@@ -480,6 +492,7 @@ exports.saveChatWithAI = asyncHandler(async (req, res, next) => {
   messages[0].role = "user";
 
   const aiResponse = await axios.post(`${FASTAPI_URL}/chat`, {
+    // eslint-disable-next-line camelcase
     session_id,
     messages,
   });
@@ -495,10 +508,13 @@ exports.saveChatWithAI = asyncHandler(async (req, res, next) => {
     content: aiResponse.data.response,
   };
 
+  // eslint-disable-next-line camelcase
   let session = await chatSession.findOne({ session_id });
 
   if (!session) {
+    // eslint-disable-next-line new-cap
     session = new chatSession({
+      // eslint-disable-next-line camelcase
       session_id,
       chat_history: [...messages, assistantMessage],
     });
@@ -509,17 +525,20 @@ exports.saveChatWithAI = asyncHandler(async (req, res, next) => {
   await session.save();
 
   res.status(200).json({
+    // eslint-disable-next-line camelcase
     session_id,
     response: assistantMessage.content,
   });
 });
 
-//*---Chat History--------------
+//* ---Chat History--------------
 
 exports.getChatHistory = asyncHandler(async (req, res, next) => {
+  // eslint-disable-next-line camelcase
   const { session_id } = req.params;
 
   const aiResponse = await axios.get(
+    // eslint-disable-next-line camelcase
     `${FASTAPI_URL}/chat_history/${session_id}`
   );
   if (!aiResponse) {

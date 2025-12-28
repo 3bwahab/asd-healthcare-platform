@@ -1,4 +1,5 @@
 const express = require("express");
+
 const router = express.Router();
 
 const {
@@ -19,7 +20,7 @@ const {
   deleteCharityValidator,
 } = require("../utils/validator/charityValidator");
 
-const AuthServices = require("../services/authServices");
+// const AuthServices = require("../services/authServices");
 
 // router.use(
 //   AuthServices.protectForParent,

@@ -12,7 +12,7 @@ const createToken = require("../utils/createToken");
 const factory = require("./handlersFactory");
 
 //* For Image
-//*1- DiskStorage engine
+//* 1- DiskStorage engine
 const multerStorageForImage = multer.diskStorage({});
 const multerFilterForImage = function (req, file, cb) {
   if (file.mimetype.startsWith("image")) {
@@ -137,8 +137,8 @@ exports.getLoggedDoctorData = asyncHandler(async (req, res, next) => {
  * @access protect/doctor
  */
 exports.updateLoggedDoctorPassword = asyncHandler(async (req, res, next) => {
-  //1-get user based on req.parent.user
-  //2-change the password
+  // 1-get user based on req.parent.user
+  // 2-change the password
 
   const parent = await Parent.findByIdAndUpdate(
     req.doctor.parent,
@@ -149,7 +149,7 @@ exports.updateLoggedDoctorPassword = asyncHandler(async (req, res, next) => {
     { new: true }
   );
 
-  //3-generate token and send the response
+  // 3-generate token and send the response
   const token = createToken(req.doctor._id);
   res.status(200).json({ data: req.doctor, token });
 });

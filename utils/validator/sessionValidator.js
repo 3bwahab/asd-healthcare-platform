@@ -1,8 +1,8 @@
 const { check } = require("express-validator");
 
-const validatorMiddlware = require("../../middlware/validatorMiddlware");
+const validatorMiddlware = require("../../middleware/validatorMiddleware");
 const Parent = require("../../models/parentModel");
-const Session = require("../../models/SessionModel");
+const Session = require("../../models/sessionModel");
 
 exports.createSessionValidator = [
   check("parentId")

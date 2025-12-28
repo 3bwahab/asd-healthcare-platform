@@ -37,7 +37,7 @@ exports.createOne = (Model) =>
 exports.getOne = (Model, populationOpts) =>
   asyncHandler(async (req, res, next) => {
     //* Build query
-    let query = Model.findById(req.params.id);
+    const query = Model.findById(req.params.id);
     if (populationOpts) {
       query.populate(populationOpts);
     }

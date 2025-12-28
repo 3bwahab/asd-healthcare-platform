@@ -49,11 +49,11 @@ reviewSchema.virtual("dateOnly").get(function () {
 
 reviewSchema.statics.calcAverageRatingsAndQuantity = async function (doctorId) {
   const result = await this.aggregate([
-    //Stage 1-get all reviews in specific product
+    // Stage 1-get all reviews in specific product
     {
       $match: { doctor: doctorId },
     },
-    //Stage 2-groping reviews based on doctorId and calc(avgRatings, ratingsQuantity)
+    // Stage 2-groping reviews based on doctorId and calc(avgRatings, ratingsQuantity)
     {
       $group: {
         _id: "doctor",

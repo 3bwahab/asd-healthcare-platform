@@ -6,7 +6,7 @@ const Appointment = require("../models/appointmentModel");
 const Parent = require("../models/parentModel");
 // const sendEmail = require("../utils/sendEmail");
 
-//** 1- Doctor Creates Available Time Slots
+//* * 1- Doctor Creates Available Time Slots
 //* protected as doctor
 exports.createAppointment = asyncHandler(async (req, res, next) => {
   const doctorId = req.doctor._id;
@@ -23,9 +23,11 @@ exports.createAppointment = asyncHandler(async (req, res, next) => {
   const createdAppointments = [];
 
   // Check all slots for conflicts before creating any
+  // eslint-disable-next-line no-restricted-syntax
   for (const slot of availableSlots) {
     const { date, day, time } = slot;
 
+    // eslint-disable-next-line no-await-in-loop
     const existing = await Appointment.findOne({
       doctorId,
       date,
@@ -44,9 +46,11 @@ exports.createAppointment = asyncHandler(async (req, res, next) => {
   }
 
   // All slots are available, create them atomically
+  // eslint-disable-next-line no-restricted-syntax
   for (const slot of availableSlots) {
     const { date, day, time } = slot;
 
+    // eslint-disable-next-line no-await-in-loop
     const appointment = await Appointment.create({
       doctorId,
       date,
@@ -63,7 +67,7 @@ exports.createAppointment = asyncHandler(async (req, res, next) => {
   });
 });
 
-//** 2- get Doctor Appointments
+//* * 2- get Doctor Appointments
 exports.getDoctorAppointments = asyncHandler(async (req, res, next) => {
   const { doctorId } = req.body;
 
@@ -82,7 +86,7 @@ exports.getDoctorAppointments = asyncHandler(async (req, res, next) => {
   res.status(200).json({ message: "Doctor's Appointments", appointment });
 });
 
-//** 3- update Appointment For Doctor
+//* * 3- update Appointment For Doctor
 exports.updateAppointment = asyncHandler(async (req, res, next) => {
   const { appointmentId, date, day, time } = req.body;
 
@@ -117,7 +121,7 @@ exports.updateAppointment = asyncHandler(async (req, res, next) => {
   res.status(200).json({ message: "Appointment updated", appointment });
 });
 
-//** 4- delete Appointment For Doctor
+//* * 4- delete Appointment For Doctor
 exports.deleteAppointment = asyncHandler(async (req, res, next) => {
   const { appointmentId } = req.body;
 
@@ -151,7 +155,7 @@ exports.deleteAppointment = asyncHandler(async (req, res, next) => {
   res.status(200).json({ message: "Appointment deleted successfully" });
 });
 
-//** 5- Get Available Appointments
+//* * 5- Get Available Appointments
 exports.getAvailableAppointments = asyncHandler(async (req, res, next) => {
   const { doctorId } = req.params;
 
@@ -162,7 +166,7 @@ exports.getAvailableAppointments = asyncHandler(async (req, res, next) => {
     );
   }
 
-  let availableAppointments = await Appointment.find({
+  const availableAppointments = await Appointment.find({
     doctorId,
     status: { $in: ["available", "cancelled"] },
   }).select("date time day");
@@ -179,7 +183,7 @@ exports.getAvailableAppointments = asyncHandler(async (req, res, next) => {
   });
 });
 
-//** 6- User Books an Appointment
+//* * 6- User Books an Appointment
 //* protected as parent
 exports.bookAppointment = asyncHandler(async (req, res, next) => {
   const { doctorId } = req.params;
@@ -241,7 +245,7 @@ exports.getAllAppointment = asyncHandler(async (req, res, next) => {
   res.status(200).json({ appointment });
 });
 
-//** 9- Cancel Appointment
+//* * 9- Cancel Appointment
 // * protected as parent
 exports.cancelAppointment = asyncHandler(async (req, res, next) => {
   const { appointmentId } = req.params;
@@ -269,7 +273,7 @@ exports.cancelAppointment = asyncHandler(async (req, res, next) => {
   });
 });
 
-//** 10- Confirm Appointment
+//* * 10- Confirm Appointment
 //* protected as doctor
 exports.confirmAppointment = asyncHandler(async (req, res, next) => {
   const { appointmentId } = req.params;
@@ -303,7 +307,7 @@ exports.confirmAppointment = asyncHandler(async (req, res, next) => {
 });
 
 //----------------------
-//** 11- Get All Doctors Booked by a Specific Parent
+//* * 11- Get All Doctors Booked by a Specific Parent
 //* protected as parent
 exports.getDoctorsForParent = asyncHandler(async (req, res, next) => {
   const parentId = req.parent._id;
@@ -327,7 +331,7 @@ exports.getDoctorsForParent = asyncHandler(async (req, res, next) => {
   });
 });
 
-//** 11- Get All Doctors Booked by a Specific Parent
+//* * 11- Get All Doctors Booked by a Specific Parent
 //* protected as parent
 exports.getAllRegisterParentsForDoctor = asyncHandler(
   async (req, res, next) => {

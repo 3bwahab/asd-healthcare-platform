@@ -35,7 +35,7 @@ const router = express();
 //* Nested Route
 router.use("/:doctorId/reviews", reviewRoute);
 
-//*Protect doctor route
+//* Protect doctor route
 router
   .route("/getdoctorData")
   .get(
@@ -80,7 +80,7 @@ router
   );
 
 //*------------------------
-//*admin
+//* admin
 // router.use(AuthServices.protectForUser, AuthServices.allowedTo("admin"));
 
 router

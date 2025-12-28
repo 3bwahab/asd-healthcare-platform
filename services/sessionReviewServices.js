@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 
-const Session = require("../models/SessionModel");
+const Session = require("../models/sessionModel");
 const Parent = require("../models/parentModel");
 const ApiError = require("../utils/apiError");
 

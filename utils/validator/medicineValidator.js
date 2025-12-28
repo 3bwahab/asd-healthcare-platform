@@ -1,7 +1,7 @@
 const { check } = require("express-validator");
 const Pharamcy = require("../../models/pharmacyModel");
 
-const validatorMiddlware = require("../../middlware/validatorMiddlware");
+const validatorMiddlware = require("../../middleware/validatorMiddleware");
 
 exports.createMedicanValidator = [
   check("medican_name").notEmpty().withMessage("Medican Name Required.."),

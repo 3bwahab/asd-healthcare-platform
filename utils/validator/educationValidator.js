@@ -1,7 +1,7 @@
 const { check } = require("express-validator");
 const Parent = require("../../models/parentModel");
 
-const validatorMiddlware = require("../../middlware/validatorMiddlware");
+const validatorMiddlware = require("../../middleware/validatorMiddleware");
 
 exports.createEducationValidator = [
   check("title").notEmpty().withMessage("Education title Required.."),

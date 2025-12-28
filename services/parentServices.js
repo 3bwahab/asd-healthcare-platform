@@ -9,7 +9,7 @@ const Parent = require("../models/parentModel");
 const createToken = require("../utils/createToken");
 const factory = require("./handlersFactory");
 
-//*1- DiskStorage engine
+//* 1- DiskStorage engine
 const multerStorage = multer.diskStorage({});
 
 const multerFilter = function (req, file, cb) {
@@ -84,7 +84,7 @@ exports.deleteAllParent = asyncHandler(async (req, res, next) => {
  * @access private/user
  */
 exports.changePassword = asyncHandler(async (req, res, next) => {
-  const id = req.params.id;
+  const {id} = req.params;
   const parent = await Parent.findByIdAndUpdate(
     id,
     {
@@ -94,7 +94,7 @@ exports.changePassword = asyncHandler(async (req, res, next) => {
     { new: true }
   );
   if (!parent) {
-    return next(new ApiError(`There is no parent for this id ${id}`, 404));
+    return next(new ApiError(`There is no parent for this id ${req.parent._id}`, 404));
   }
   res.status(200).json({ data: parent });
 });
@@ -157,7 +157,7 @@ exports.updateLoggedParentData = asyncHandler(async (req, res, next) => {
     { new: true }
   );
   if (!parent) {
-    return next(new ApiError(`There is no parent for this id ${id}`, 404));
+    return next(new ApiError(`There is no parent for this id ${req.parent._id}`, 404));
   }
   res.status(200).json({ data: parent });
 });

@@ -51,8 +51,8 @@ exports.updateSessionToPaid = asyncHandler(async (req, res, next) => {
 //*    @route /api/v1/orders/checkout-session/doctorId
 
 exports.checkoutSession = asyncHandler(async (req, res, next) => {
-  //*1 - get doctor by doctorId in params and get the session Price
-  const doctorId = req.params.doctorId;
+  //* 1 - get doctor by doctorId in params and get the session Price
+  const {doctorId} = req.params;
   const doctor = await Doctor.findById(doctorId);
   if (!doctor) {
     return next(new ApiError(`there is no doctor for this id: ${doctorId}`));
@@ -93,7 +93,7 @@ exports.checkoutSession = asyncHandler(async (req, res, next) => {
 // @access  Private/Parent
 exports.paymentSheet = asyncHandler(async (req, res, next) => {
   try {
-    const doctorId = req.params.doctorId;
+    const {doctorId} = req.params;
 
     // 1) Get doctor by ID
     const doctor = await Doctor.findById(doctorId);

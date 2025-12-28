@@ -1,8 +1,8 @@
 const asyncHandler = require("express-async-handler");
+const multer = require("multer");
 const Charity = require("../models/charityModel");
 const factory = require("./handlersFactory");
 
-const multer = require("multer");
 const { cloudinaryConfig } = require("../utils/cloudinary");
 const ApiError = require("../utils/apiError");
 

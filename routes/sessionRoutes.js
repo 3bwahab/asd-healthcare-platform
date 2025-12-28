@@ -23,6 +23,7 @@ const {
 } = require("../utils/validator/sessionValidator");
 
 const AuthServices = require("../services/authServices");
+
 const router = express.Router();
 
 // Create and get all sessions
