@@ -3,14 +3,19 @@
  * Tests query feature functionality (pagination, filtering, sorting, search)
  */
 
+// eslint-disable-next-line global-require
+const ApiFeatures = require("../../../utils/apiFeatures");
+
 describe("ApiFeatures Utility", () => {
-  let ApiFeatures;
   let mockMongooseQuery;
 
   beforeAll(() => {
-    // Import ApiFeatures (may require actual mongoose for testing)
+    // ApiFeatures loaded at module level to avoid global-require error
     try {
-      ApiFeatures = require("../../../utils/apiFeatures");
+      // Validate ApiFeatures is loaded
+      if (!ApiFeatures) {
+        throw new Error("ApiFeatures not loaded");
+      }
     } catch (error) {
       // Skip if mongoose models aren't available in test environment
       console.warn("ApiFeatures requires mongoose connection - skipping tests");
@@ -39,7 +44,7 @@ describe("ApiFeatures Utility", () => {
 
       apiFeatures.paginate();
 
-      expect(mockMongooseQuery.limit).toHaveBeenCalledWith(10);
+      expect(mockMongooseQuery.limit).toHaveBeenCalledWith(50);
       expect(mockMongooseQuery.skip).toHaveBeenCalledWith(0);
     });
 

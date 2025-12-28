@@ -51,10 +51,12 @@ const clearDatabase = async () => {
     return;
   }
 
-  const collections = mongoose.connection.collections;
+  const {collections} = mongoose.connection;
 
-  for (const key in collections) {
-    const collection = collections[key];
+  const collectionNames = Object.keys(collections);
+  for (let i = 0; i < collectionNames.length; i += 1) {
+    const collection = collections[collectionNames[i]];
+    // eslint-disable-next-line no-await-in-loop
     await collection.deleteMany({});
   }
 
@@ -69,11 +71,13 @@ const dropCollections = async () => {
     return;
   }
 
-  const collections = mongoose.connection.collections;
+  const {collections} = mongoose.connection;
 
-  for (const key in collections) {
-    const collection = collections[key];
+  const collectionNames = Object.keys(collections);
+  for (let i = 0; i < collectionNames.length; i += 1) {
+    const collection = collections[collectionNames[i]];
     try {
+      // eslint-disable-next-line no-await-in-loop
       await collection.drop();
     } catch (error) {
       // Ignore error if collection doesn't exist

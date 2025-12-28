@@ -158,8 +158,10 @@ describe("createToken Utility", () => {
     test("should create different tokens for same user at different times", async () => {
       const token1 = createToken(mockUserId);
 
-      // Wait a tiny bit to ensure different iat
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      // Wait 1100ms to ensure different iat (JWT uses seconds, not milliseconds)
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1100);
+      });
 
       const token2 = createToken(mockUserId);
 

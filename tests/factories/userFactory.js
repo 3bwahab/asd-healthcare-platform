@@ -51,16 +51,19 @@ const createDoctor = async (overrides = {}) => {
   ];
 
   return {
-    doctorName: `Dr. ${faker.person.fullName()}`,
+    userName: overrides.userName || `Dr. ${faker.person.fullName().substring(0, 18)}`, // Max 20 chars
     email: faker.internet.email().toLowerCase(),
     password: hashedPassword,
     passwordConfirmation: hashedPassword,
-    specialization: faker.helpers.arrayElement(specializations),
+    age: faker.number.int({ min: 28, max: 65 }), // Doctor age requirement
     phone: `+2${faker.string.numeric(10)}`,
     address: faker.location.streetAddress({ useFullAddress: true }),
-    experience: faker.number.int({ min: 2, max: 30 }),
-    certification: "Board Certified",
+    specialization: faker.helpers.arrayElement(specializations),
+    experienceYears: faker.number.int({ min: 2, max: 30 }),
+    clinicAddress: faker.location.streetAddress({ useFullAddress: true }),
+    consultationFee: faker.number.int({ min: 200, max: 1000 }),
     bio: faker.lorem.paragraph(),
+    certification: "Board Certified",
     rating: faker.number.float({ min: 3.5, max: 5.0, precision: 0.1 }),
     role: "doctor",
     emailVerified: true,
@@ -78,7 +81,8 @@ const createDoctor = async (overrides = {}) => {
  */
 const createParents = async (count) => {
   const parents = [];
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < count; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
     parents.push(await createParent());
   }
   return parents;
@@ -91,7 +95,8 @@ const createParents = async (count) => {
  */
 const createDoctors = async (count) => {
   const doctors = [];
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < count; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
     doctors.push(await createDoctor());
   }
   return doctors;

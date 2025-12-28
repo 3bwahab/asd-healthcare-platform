@@ -71,7 +71,7 @@ const createSessionReview = (sessionId, parentId, overrides = {}) => {
  */
 const createSessions = (appointmentId, doctorId, childId, count) => {
   const sessions = [];
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < count; i += 1) {
     sessions.push(createSession(appointmentId, doctorId, childId));
   }
   return sessions;
@@ -86,7 +86,7 @@ const createSessions = (appointmentId, doctorId, childId, count) => {
  */
 const createReviews = (parentId, doctorId, count) => {
   const reviews = [];
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < count; i += 1) {
     reviews.push(createReview(parentId, doctorId));
   }
   return reviews;

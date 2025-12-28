@@ -58,7 +58,7 @@ const createChild = (parentId, overrides = {}) => {
  */
 const createChildren = (parentId, count) => {
   const children = [];
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < count; i += 1) {
     children.push(createChild(parentId));
   }
   return children;
@@ -74,7 +74,7 @@ const createChildren = (parentId, count) => {
  */
 const createAppointments = (parentId, doctorId, childId, count) => {
   const appointments = [];
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < count; i += 1) {
     appointments.push(createAppointment(parentId, doctorId, childId));
   }
   return appointments;
