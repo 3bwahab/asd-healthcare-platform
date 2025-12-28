@@ -1,0 +1,274 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#f4f4f4','primaryTextColor':'#333','primaryBorderColor':'#666','lineColor':'#666','secondaryColor':'#e8e8e8','tertiaryColor':'#fff','fontSize':'18px'}, 'flowchart': {'nodeSpacing': 80, 'rankSpacing': 100, 'padding': 20}}}%%
+graph LR
+    %% ========================================
+    %% ASD Healthcare Platform - Use Case Diagram
+    %% ========================================
+    %% This diagram illustrates all system use cases organized by domain:
+    %% - User Management & Authentication
+    %% - Child & Family Management
+    %% - Healthcare Services (Appointments, Sessions, Reviews)
+    %% - AI/ML Screening & Assessment
+    %% - Payment & E-Commerce
+    %% - Educational Resources & Community Support
+    %% - System Administration
+    %% ========================================
+
+    %% ==================== ACTORS ====================
+
+    Parent["👤 Parent/Guardian<br/><i>Primary User</i>"]
+    Doctor["👨‍⚕️ Healthcare Professional<br/><i>Service Provider</i>"]
+    Admin["⚙️ System Administrator<br/><i>Platform Manager</i>"]
+    AI["🤖 AI Service<br/><i>External System</i>"]
+    Payment["💳 Payment Gateway<br/><i>Stripe API</i>"]
+
+    %% ==================== AUTHENTICATION & ACCOUNT MANAGEMENT ====================
+
+    subgraph AUTH["🔐 Authentication & Account Management"]
+        direction LR
+        UC_AUTH_001["<b>UC-001</b><br/>Register New Account<br/><i>Create parent or doctor account</i>"]
+        UC_AUTH_002["<b>UC-002</b><br/>Login to System<br/><i>JWT-based authentication</i>"]
+        UC_AUTH_003["<b>UC-003</b><br/>Verify Email Address<br/><i>Email verification with code</i>"]
+        UC_AUTH_004["<b>UC-004</b><br/>Reset Password<br/><i>Email-based recovery</i>"]
+        UC_AUTH_005["<b>UC-005</b><br/>Update Profile Information<br/><i>Modify user details</i>"]
+        UC_AUTH_006["<b>UC-006</b><br/>Change Password<br/><i>Secure password update</i>"]
+        UC_AUTH_007["<b>UC-007</b><br/>Logout from System<br/><i>Terminate session</i>"]
+    end
+
+    %% ==================== CHILD & FAMILY MANAGEMENT ====================
+
+    subgraph CHILD["👶 Child & Family Management"]
+        direction LR
+        UC_CHILD_001["<b>UC-010</b><br/>Add Child Profile<br/><i>Register new child</i>"]
+        UC_CHILD_002["<b>UC-011</b><br/>View Child Records<br/><i>Browse all children</i>"]
+        UC_CHILD_003["<b>UC-012</b><br/>Update Child Information<br/><i>Modify health details</i>"]
+        UC_CHILD_004["<b>UC-013</b><br/>Remove Child Profile<br/><i>Delete child record</i>"]
+        UC_CHILD_005["<b>UC-014</b><br/>Track Child Development<br/><i>View progress history</i>"]
+    end
+
+    %% ==================== APPOINTMENT MANAGEMENT ====================
+
+    subgraph APPT["📅 Appointment Management"]
+        direction LR
+        UC_APPT_001["<b>UC-020</b><br/>Browse Available Appointments<br/><i>Search by doctor/date/specialty</i>"]
+        UC_APPT_002["<b>UC-021</b><br/>Book Appointment<br/><i>Reserve consultation slot</i>"]
+        UC_APPT_003["<b>UC-022</b><br/>Cancel Appointment<br/><i>Cancel before scheduled time</i>"]
+        UC_APPT_004["<b>UC-023</b><br/>Reschedule Appointment<br/><i>Change date/time</i>"]
+        UC_APPT_005["<b>UC-024</b><br/>View My Appointments<br/><i>See upcoming & past bookings</i>"]
+        UC_APPT_006["<b>UC-025</b><br/>Create Time Slots<br/><i>Doctor sets availability</i>"]
+        UC_APPT_007["<b>UC-026</b><br/>Confirm Appointment<br/><i>Doctor accepts booking</i>"]
+    end
+
+    %% ==================== SESSION MANAGEMENT ====================
+
+    subgraph SESSION["🧑‍🤝‍🧑 Therapy Session Management"]
+        direction LR
+        UC_SESS_001["<b>UC-030</b><br/>Create New Session<br/><i>Doctor initiates therapy session</i>"]
+        UC_SESS_002["<b>UC-031</b><br/>View Session History<br/><i>Browse all sessions</i>"]
+        UC_SESS_003["<b>UC-032</b><br/>Add Session Notes<br/><i>Doctor documents observations</i>"]
+        UC_SESS_004["<b>UC-033</b><br/>Update Session Status<br/><i>Mark as done/cancelled</i>"]
+        UC_SESS_005["<b>UC-034</b><br/>Submit Session Review<br/><i>Parent rates session quality</i>"]
+        UC_SESS_006["<b>UC-035</b><br/>View Session Reviews<br/><i>Read feedback & ratings</i>"]
+    end
+
+    %% ==================== AI SCREENING & ASSESSMENT ====================
+
+    subgraph AI_SCREEN["🤖 AI-Powered Screening & Assessment"]
+        direction LR
+        UC_AI_001["<b>UC-040</b><br/>View Screening Questionnaire<br/><i>Browse assessment questions</i>"]
+        UC_AI_002["<b>UC-041</b><br/>Submit Screening Answers<br/><i>Complete ASD questionnaire</i>"]
+        UC_AI_003["<b>UC-042</b><br/>Complete Severity Assessment<br/><i>Answer degree-level questions</i>"]
+        UC_AI_004["<b>UC-043</b><br/>Get AI Prediction<br/><i>Receive ASD likelihood analysis</i>"]
+        UC_AI_005["<b>UC-044</b><br/>View Assessment History<br/><i>Track prediction results</i>"]
+        UC_AI_006["<b>UC-045</b><br/>Chat with AI Assistant<br/><i>Conversational guidance</i>"]
+        UC_AI_007["<b>UC-046</b><br/>Generate Prediction Report<br/><i>AI processes answers</i>"]
+    end
+
+    %% ==================== REVIEWS & RATINGS ====================
+
+    subgraph REVIEW["⭐ Reviews & Ratings"]
+        direction LR
+        UC_REV_001["<b>UC-050</b><br/>Write Doctor Review<br/><i>Rate & review professional</i>"]
+        UC_REV_002["<b>UC-051</b><br/>View Doctor Reviews<br/><i>Read patient feedback</i>"]
+        UC_REV_003["<b>UC-052</b><br/>Update My Review<br/><i>Modify existing review</i>"]
+        UC_REV_004["<b>UC-053</b><br/>Delete My Review<br/><i>Remove posted review</i>"]
+        UC_REV_005["<b>UC-054</b><br/>View Doctor Ratings<br/><i>See average rating & count</i>"]
+    end
+
+    %% ==================== PAYMENT & ORDERS ====================
+
+    subgraph PAYMENT["💳 Payment & Order Management"]
+        direction LR
+        UC_PAY_001["<b>UC-060</b><br/>Create Payment Session<br/><i>Initiate Stripe checkout</i>"]
+        UC_PAY_002["<b>UC-061</b><br/>Process Payment<br/><i>Complete transaction</i>"]
+        UC_PAY_003["<b>UC-062</b><br/>View Order History<br/><i>Browse past transactions</i>"]
+        UC_PAY_004["<b>UC-063</b><br/>Handle Payment Webhook<br/><i>Process Stripe events</i>"]
+        UC_PAY_005["<b>UC-064</b><br/>Generate Invoice<br/><i>Create payment receipt</i>"]
+    end
+
+    %% ==================== EDUCATIONAL RESOURCES ====================
+
+    subgraph EDU["📚 Educational Resources & Community"]
+        direction LR
+        UC_EDU_001["<b>UC-070</b><br/>Browse Educational Articles<br/><i>Read ASD resources</i>"]
+        UC_EDU_002["<b>UC-071</b><br/>Search Medicine Database<br/><i>Find medications & info</i>"]
+        UC_EDU_003["<b>UC-072</b><br/>Locate Pharmacies<br/><i>Find nearby pharmacies</i>"]
+        UC_EDU_004["<b>UC-073</b><br/>View Charity Organizations<br/><i>Browse support services</i>"]
+        UC_EDU_005["<b>UC-074</b><br/>Access Medicine Details<br/><i>View dosage & usage info</i>"]
+    end
+
+    %% ==================== SYSTEM ADMINISTRATION ====================
+
+    subgraph ADMIN_PANEL["⚙️ System Administration"]
+        direction LR
+        UC_ADM_001["<b>UC-080</b><br/>Manage Users<br/><i>CRUD operations on accounts</i>"]
+        UC_ADM_002["<b>UC-081</b><br/>Manage Educational Content<br/><i>Create/update articles</i>"]
+        UC_ADM_003["<b>UC-082</b><br/>Manage Medicine Database<br/><i>Add/update medications</i>"]
+        UC_ADM_004["<b>UC-083</b><br/>Manage Pharmacies<br/><i>Register pharmacy partners</i>"]
+        UC_ADM_005["<b>UC-084</b><br/>Manage Charities<br/><i>Add support organizations</i>"]
+        UC_ADM_006["<b>UC-085</b><br/>Monitor System Health<br/><i>View logs & metrics</i>"]
+        UC_ADM_007["<b>UC-086</b><br/>Manage AI Questions<br/><i>Update screening questionnaire</i>"]
+    end
+
+    %% ==================== ACTOR-USE CASE RELATIONSHIPS ====================
+
+    %% Parent Relationships
+    Parent --> UC_AUTH_001
+    Parent --> UC_AUTH_002
+    Parent --> UC_AUTH_003
+    Parent --> UC_AUTH_004
+    Parent --> UC_AUTH_005
+    Parent --> UC_AUTH_006
+    Parent --> UC_AUTH_007
+
+    Parent --> UC_CHILD_001
+    Parent --> UC_CHILD_002
+    Parent --> UC_CHILD_003
+    Parent --> UC_CHILD_004
+    Parent --> UC_CHILD_005
+
+    Parent --> UC_APPT_001
+    Parent --> UC_APPT_002
+    Parent --> UC_APPT_003
+    Parent --> UC_APPT_004
+    Parent --> UC_APPT_005
+
+    Parent --> UC_SESS_002
+    Parent --> UC_SESS_005
+    Parent --> UC_SESS_006
+
+    Parent --> UC_AI_001
+    Parent --> UC_AI_002
+    Parent --> UC_AI_003
+    Parent --> UC_AI_004
+    Parent --> UC_AI_005
+    Parent --> UC_AI_006
+
+    Parent --> UC_REV_001
+    Parent --> UC_REV_002
+    Parent --> UC_REV_003
+    Parent --> UC_REV_004
+    Parent --> UC_REV_005
+
+    Parent --> UC_PAY_001
+    Parent --> UC_PAY_002
+    Parent --> UC_PAY_003
+    Parent --> UC_PAY_005
+
+    Parent --> UC_EDU_001
+    Parent --> UC_EDU_002
+    Parent --> UC_EDU_003
+    Parent --> UC_EDU_004
+    Parent --> UC_EDU_005
+
+    %% Doctor Relationships
+    Doctor --> UC_AUTH_001
+    Doctor --> UC_AUTH_002
+    Doctor --> UC_AUTH_003
+    Doctor --> UC_AUTH_004
+    Doctor --> UC_AUTH_005
+    Doctor --> UC_AUTH_006
+    Doctor --> UC_AUTH_007
+
+    Doctor --> UC_APPT_005
+    Doctor --> UC_APPT_006
+    Doctor --> UC_APPT_007
+
+    Doctor --> UC_SESS_001
+    Doctor --> UC_SESS_002
+    Doctor --> UC_SESS_003
+    Doctor --> UC_SESS_004
+    Doctor --> UC_SESS_006
+
+    Doctor --> UC_REV_002
+    Doctor --> UC_REV_005
+
+    Doctor --> UC_PAY_003
+    Doctor --> UC_PAY_004
+
+    %% Admin Relationships
+    Admin --> UC_AUTH_002
+    Admin --> UC_AUTH_007
+    Admin --> UC_ADM_001
+    Admin --> UC_ADM_002
+    Admin --> UC_ADM_003
+    Admin --> UC_ADM_004
+    Admin --> UC_ADM_005
+    Admin --> UC_ADM_006
+    Admin --> UC_ADM_007
+
+    %% External System Relationships
+    AI -.provides service to.-> UC_AI_004
+    AI -.generates.-> UC_AI_007
+    Payment -.processes.-> UC_PAY_002
+    Payment -.sends events to.-> UC_PAY_004
+
+    %% ==================== USE CASE DEPENDENCIES ====================
+
+    %% Authentication Flow
+    UC_AUTH_001 -.->|includes| UC_AUTH_003
+    UC_AUTH_002 -.->|requires| UC_AUTH_003
+
+    %% Appointment Flow
+    UC_APPT_002 -.->|requires| UC_APPT_001
+    UC_APPT_004 -.->|extends| UC_APPT_003
+    UC_APPT_007 -.->|requires| UC_APPT_002
+
+    %% Session Flow
+    UC_SESS_005 -.->|requires| UC_SESS_002
+    UC_SESS_003 -.->|requires| UC_SESS_001
+
+    %% AI Screening Flow
+    UC_AI_002 -.->|requires| UC_AI_001
+    UC_AI_003 -.->|requires| UC_AI_002
+    UC_AI_004 -.->|requires| UC_AI_003
+    UC_AI_007 -.->|processes| UC_AI_003
+
+    %% Payment Flow
+    UC_PAY_002 -.->|requires| UC_PAY_001
+    UC_PAY_005 -.->|requires| UC_PAY_002
+
+    %% Review Flow
+    UC_REV_001 -.->|requires| UC_APPT_005
+    UC_REV_003 -.->|extends| UC_REV_001
+    UC_REV_004 -.->|extends| UC_REV_001
+
+    %% ==================== STYLING ====================
+
+    %% Actor Styling
+    style Parent fill:#4A90E2,stroke:#2E5C8A,stroke-width:3px,color:#fff
+    style Doctor fill:#50C878,stroke:#2E7D52,stroke-width:3px,color:#fff
+    style Admin fill:#FF6B6B,stroke:#C23B3B,stroke-width:3px,color:#fff
+    style AI fill:#9B59B6,stroke:#6C3483,stroke-width:3px,color:#fff
+    style Payment fill:#F39C12,stroke:#B87503,stroke-width:3px,color:#fff
+
+    %% Subgraph Styling
+    style AUTH fill:#E3F2FD,stroke:#1976D2,stroke-width:2px
+    style CHILD fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+    style APPT fill:#E8F5E9,stroke:#388E3C,stroke-width:2px
+    style SESSION fill:#FFF3E0,stroke:#F57C00,stroke-width:2px
+    style AI_SCREEN fill:#FCE4EC,stroke:#C2185B,stroke-width:2px
+    style REVIEW fill:#FFF9C4,stroke:#F9A825,stroke-width:2px
+    style PAYMENT fill:#E0F2F1,stroke:#00796B,stroke-width:2px
+    style EDU fill:#EFEBE9,stroke:#5D4037,stroke-width:2px
+    style ADMIN_PANEL fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+

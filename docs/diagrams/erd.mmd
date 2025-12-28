@@ -1,0 +1,277 @@
+erDiagram
+    %% ========================================
+    %% ASD Healthcare Platform - Entity Relationship Diagram
+    %% ========================================
+    %% This diagram shows the complete database schema including:
+    %% - User Management (Parent, Doctor)
+    %% - Healthcare Services (Appointment, Session, Review)
+    %% - AI/ML Integration (Question, Answer, Prediction)
+    %% - E-commerce (Medicine, Pharmacy, Order, Charity)
+    %% - Educational Resources
+    %% ========================================
+
+    %% ==================== Core User Entities ====================
+
+    Parent ||--o{ Child : "has children"
+    Parent ||--o{ Appointment : "books appointments"
+    Parent ||--o{ Session : "attends sessions"
+    Parent ||--o{ Review : "writes reviews"
+    Parent ||--o{ Order : "places orders"
+    Parent ||--o{ Answer : "submits AI answers"
+    Parent ||--o{ AnswerDegree : "submits severity answers"
+    Parent ||--o{ ChatSession : "has chat sessions"
+    Parent ||--o{ Prediction : "receives predictions"
+
+    Doctor ||--|| Parent : "extends from"
+    Doctor ||--o{ Appointment : "provides appointments"
+    Doctor ||--o{ Session : "conducts sessions"
+    Doctor ||--o{ Review : "receives reviews"
+    Doctor ||--o{ Order : "receives payments"
+
+    Child }o--|| Parent : "belongs to"
+    Child ||--o{ Prediction : "has predictions"
+
+    %% ==================== Healthcare Services ====================
+
+    Appointment }o--|| Doctor : "scheduled with"
+    Appointment }o--|| Parent : "booked by"
+
+    Session }o--|| Doctor : "conducted by"
+    Session }o--|| Parent : "attended by"
+    Session ||--o{ SessionReview : "has reviews"
+
+    Review }o--|| Parent : "written by"
+    Review }o--|| Doctor : "reviews for"
+
+    SessionReview }o--|| Parent : "written by"
+
+    %% ==================== AI/ML Integration ====================
+
+    Question ||--o{ Answer : "has answers"
+    Answer }o--|| Parent : "submitted by"
+
+    QuestionDegree ||--o{ AnswerDegree : "has severity answers"
+    AnswerDegree }o--|| Parent : "submitted by"
+
+    Prediction }o--|| Parent : "generated for"
+    Prediction }o--|| Child : "assesses child"
+
+    ChatSession }o--|| Parent : "belongs to"
+
+    %% ==================== E-Commerce & Resources ====================
+
+    Pharmacy ||--o{ Medicine : "stocks medicines"
+    Medicine }o--|| Pharmacy : "stocked by"
+
+    Order }o--|| Parent : "placed by"
+    Order }o--|| Doctor : "payment for"
+
+    %% ==================== Entity Definitions ====================
+
+    Parent {
+        ObjectId _id PK "Primary key"
+        string userName "Full name"
+        string email UK "Unique email address"
+        string password "Hashed password (bcrypt)"
+        number age "Age in years"
+        string phone "Contact number"
+        string address "Residential address"
+        boolean active "Account active status"
+        enum role "USER, ADMIN"
+        string image "Profile picture URL"
+        number numOfChild "Number of children"
+        string session_id "Stripe session ID"
+        date passwordChangedAt "Last password change"
+        date emailChangedAt "Last email verification"
+        boolean emailResetVerfied "Email verified"
+        date createdAt "Account creation date"
+        date updatedAt "Last update timestamp"
+    }
+
+    Doctor {
+        ObjectId _id PK "Primary key"
+        ObjectId parent FK "Reference to Parent account"
+        string speciailization "Medical specialization"
+        string qualifications "Professional qualifications"
+        string medicalLicense "License document URL"
+        string address "Clinic/office address"
+        string about "Professional bio"
+        number Session_price "Session fee (currency)"
+        number ratingAverage "Average rating (1-5)"
+        number ratingQuantity "Total reviews count"
+        string image "Profile picture URL"
+        enum role "DOCTOR"
+        date createdAt "Registration date"
+        date updatedAt "Last update timestamp"
+    }
+
+    Child {
+        ObjectId _id PK "Primary key"
+        ObjectId parent FK "Reference to Parent"
+        string childName "Child's full name"
+        date birthday "Date of birth"
+        number age "Calculated age"
+        enum gender "MALE, FEMALE"
+        string healthDetails "Medical history"
+        string autism_level "ASD severity (LEVEL1, LEVEL2, LEVEL3)"
+        string degree_level "Functional level"
+        string image "Profile picture URL"
+        date createdAt "Record creation date"
+        date updatedAt "Last update timestamp"
+    }
+
+    Appointment {
+        ObjectId _id PK "Primary key"
+        ObjectId doctorId FK "Doctor providing appointment"
+        ObjectId parentId FK "Parent booking appointment"
+        string date "Appointment date (YYYY-MM-DD)"
+        string day "Day of week"
+        string time "Time slot"
+        enum status "PENDING, CONFIRMED, CANCELLED, COMPLETED"
+        date createdAt "Booking timestamp"
+        date updatedAt "Last modification"
+    }
+
+    Session {
+        ObjectId _id PK "Primary key"
+        ObjectId doctorId FK "Doctor conducting session"
+        ObjectId parentId FK "Parent attending session"
+        number session_number "Sequential session number"
+        string session_date "Session date"
+        enum statusOfSession "COMING, DONE, CANCELLED"
+        array comments "Session notes (text)"
+        array session_review "Embedded reviews"
+        date createdAt "Session creation date"
+        date updatedAt "Last update timestamp"
+    }
+
+    Order {
+        ObjectId _id PK "Primary key"
+        ObjectId parent FK "Parent placing order"
+        ObjectId doctor FK "Doctor receiving payment"
+        object info "Order details (itemization)"
+        number price "Total amount (currency)"
+        enum paymentMethodType "CARD, CASH"
+        boolean isPaid "Payment status"
+        date paidAt "Payment timestamp"
+        date createdAt "Order creation date"
+        date updatedAt "Last update timestamp"
+    }
+
+    Review {
+        ObjectId _id PK "Primary key"
+        ObjectId parent FK "Review author"
+        ObjectId doctor FK "Doctor being reviewed"
+        string title "Review headline"
+        number ratings "Rating (1-5)"
+        date createdAt "Review submission date"
+        date updatedAt "Last modification"
+    }
+
+    SessionReview {
+        ObjectId _id PK "Primary key (embedded)"
+        ObjectId parentId FK "Review author"
+        number ratings "Rating (1-5)"
+        string title "Review text"
+        date createdAt "Review timestamp"
+    }
+
+    Medicine {
+        ObjectId _id PK "Primary key"
+        ObjectId pharmacy FK "Pharmacy stocking medicine"
+        string medicineName "Medicine name"
+        string description "Usage and dosage info"
+        number price "Price per unit"
+        string image "Product image URL"
+        date createdAt "Record creation date"
+        date updatedAt "Last update timestamp"
+    }
+
+    Pharmacy {
+        ObjectId _id PK "Primary key"
+        string pharmacyName "Pharmacy name"
+        string pharmacyAddress "Physical location"
+        string phone "Contact number"
+        string image "Pharmacy logo URL"
+        date createdAt "Registration date"
+        date updatedAt "Last update timestamp"
+    }
+
+    Charity {
+        ObjectId _id PK "Primary key"
+        string charity_name "Organization name"
+        string charity_address "Office address"
+        string charity_phone "Contact number"
+        string logo "Organization logo URL"
+        array charity_medican "Medicines donated (Medicine refs)"
+        date createdAt "Registration date"
+        date updatedAt "Last update timestamp"
+    }
+
+    Education {
+        ObjectId _id PK "Primary key"
+        string articleTitle "Article headline"
+        string content "Full article text"
+        string image "Featured image URL"
+        date createdAt "Publication date"
+        date updatedAt "Last modification"
+    }
+
+    Question {
+        ObjectId _id PK "Primary key"
+        string text "Question text"
+        enum type "MULTIPLE_CHOICE, TEXT, RATING"
+        array options "Answer choices (for MCQ)"
+        number order "Display order"
+        date createdAt "Question creation date"
+        date updatedAt "Last modification"
+    }
+
+    Answer {
+        ObjectId _id PK "Primary key"
+        ObjectId questionId FK "Question being answered"
+        ObjectId parentId FK "Parent submitting answer"
+        string answerText "User's response"
+        number score "Answer score (for grading)"
+        date createdAt "Submission timestamp"
+    }
+
+    QuestionDegree {
+        ObjectId _id PK "Primary key"
+        string text "Severity assessment question"
+        enum type "RATING, SCALE"
+        array options "Severity level options"
+        number order "Display sequence"
+        date createdAt "Question creation date"
+        date updatedAt "Last modification"
+    }
+
+    AnswerDegree {
+        ObjectId _id PK "Primary key"
+        ObjectId questionDegreeId FK "Severity question"
+        ObjectId parentId FK "Parent responding"
+        string answerText "Severity response"
+        number degreeScore "Severity score"
+        date createdAt "Submission timestamp"
+    }
+
+    Prediction {
+        ObjectId _id PK "Primary key"
+        ObjectId parentId FK "Parent receiving prediction"
+        ObjectId childId FK "Child being assessed"
+        string prediction "ASD prediction (YES, NO, UNCERTAIN)"
+        number confidence "Confidence score (0-100)"
+        string severity "Severity level (LEVEL1, LEVEL2, LEVEL3)"
+        object details "Detailed analysis (JSON)"
+        date createdAt "Prediction generation date"
+    }
+
+    ChatSession {
+        ObjectId _id PK "Primary key"
+        ObjectId parentId FK "Parent in conversation"
+        array messages "Chat message history"
+        enum status "ACTIVE, CLOSED"
+        date createdAt "Session start time"
+        date updatedAt "Last message timestamp"
+    }
+

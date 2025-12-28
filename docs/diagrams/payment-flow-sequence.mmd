@@ -1,0 +1,111 @@
+sequenceDiagram
+    autonumber
+    actor Parent
+    participant Client as Client App
+    participant API as API Server
+    participant OrderSvc as Order Service
+    participant DB as MongoDB
+    participant Stripe as Stripe API
+    participant Webhook as Stripe Webhook
+
+    rect rgb(200, 220, 240)
+    Note over Parent,Stripe: Create Checkout Session (Web)
+    Parent->>+Client: Click "Book & Pay"
+    Client->>+API: POST /api/v1/order/checkout-session/{doctorId}
+    API->>API: Verify JWT & extract parentId
+    API->>+OrderSvc: createCheckoutSession(doctorId, parentId)
+    OrderSvc->>+DB: Find doctor by ID
+    DB-->>-OrderSvc: Doctor data with Session_price
+    OrderSvc->>+Stripe: Create checkout session
+    Note right of Stripe: customer_email<br/>line_items<br/>success_url<br/>cancel_url<br/>client_reference_id
+    Stripe-->>-OrderSvc: Session with checkout URL
+    OrderSvc-->>-API: Return session
+    API-->>-Client: 200 OK - {sessionUrl, sessionId}
+    Client->>Parent: Redirect to Stripe Checkout
+    Parent->>+Stripe: Complete payment on Stripe
+    Stripe-->>-Parent: Payment successful
+    Stripe->>Parent: Redirect to success_url
+    end
+
+    rect rgb(220, 240, 200)
+    Note over Webhook,DB: Stripe Webhook Processes Payment (Web)
+    Stripe->>+Webhook: POST /webhook-checkout
+    Note right of Webhook: Event: checkout.session.completed
+    Webhook->>Webhook: Verify signature with WEBHOOK_SECRET
+    Webhook->>+OrderSvc: createCardOrderForWeb(session)
+    OrderSvc->>OrderSvc: Extract doctorId from client_reference_id
+    OrderSvc->>+DB: Find doctor by ID
+    DB-->>-OrderSvc: Doctor found with price
+    OrderSvc->>+DB: Find parent by email
+    DB-->>-OrderSvc: Parent found
+
+    OrderSvc->>+DB: Check if order already exists (idempotency)
+    DB-->>-OrderSvc: No duplicate found
+
+    OrderSvc->>+DB: Create order {parent, doctor, price, isPaid: true, paymentMethodType: "card"}
+    DB-->>-OrderSvc: Order created
+    OrderSvc-->>-Webhook: Order creation successful
+    Webhook-->>-Stripe: 200 OK - {received: true}
+    end
+
+    rect rgb(240, 220, 200)
+    Note over Parent,Stripe: Mobile Payment Flow
+    Parent->>+Client: Initiate payment
+    Client->>+API: POST /api/v1/order/payment-intent/{doctorId}
+    API->>API: Verify JWT & extract parentId
+    API->>+OrderSvc: createPaymentIntent(doctorId, parentId)
+    OrderSvc->>+DB: Find doctor by ID
+    DB-->>-OrderSvc: Doctor with Session_price
+    OrderSvc->>+DB: Find parent by ID
+    DB-->>-OrderSvc: Parent data
+
+    OrderSvc->>+Stripe: Create or get customer
+    Stripe-->>-OrderSvc: Customer object
+
+    OrderSvc->>+Stripe: Create ephemeral key for customer
+    Stripe-->>-OrderSvc: Ephemeral key
+
+    OrderSvc->>+Stripe: Create payment intent
+    Note right of Stripe: amount<br/>currency: EGP<br/>customer<br/>metadata: {doctorId, parentId}
+    Stripe-->>-OrderSvc: PaymentIntent with client_secret
+
+    OrderSvc-->>-API: Return payment details
+    API-->>-Client: 200 OK - {paymentIntent, ephemeralKey, customer, publishableKey}
+    Client->>Parent: Show payment sheet
+    Parent->>+Stripe: Confirm payment
+    Stripe-->>-Parent: Payment successful
+    end
+
+    rect rgb(240, 200, 220)
+    Note over Webhook,DB: Stripe Webhook Processes Payment (Mobile)
+    Stripe->>+Webhook: POST /webhook-checkout
+    Note right of Webhook: Event: payment_intent.succeeded
+    Webhook->>Webhook: Verify signature with WEBHOOK_SECRET
+    Webhook->>+OrderSvc: createCardOrderForMobile(paymentIntent)
+    OrderSvc->>OrderSvc: Extract doctorId & parentId from metadata
+    OrderSvc->>+DB: Find doctor by ID
+    DB-->>-OrderSvc: Doctor found
+    OrderSvc->>+DB: Find parent by ID
+    DB-->>-OrderSvc: Parent found
+
+    OrderSvc->>+DB: Check if order already exists (idempotency)
+    DB-->>-OrderSvc: No duplicate found
+
+    OrderSvc->>+DB: Create order {parent, doctor, price, isPaid: true, paymentMethodType: "card"}
+    DB-->>-OrderSvc: Order created
+    OrderSvc-->>-Webhook: Order creation successful
+    Webhook-->>-Stripe: 200 OK - {received: true}
+    end
+
+    rect rgb(200, 240, 220)
+    Note over Parent,DB: View Order History
+    Parent->>+Client: View my orders
+    Client->>+API: GET /api/v1/order
+    API->>API: Verify JWT & extract parentId
+    API->>+OrderSvc: getOrdersForParent(parentId)
+    OrderSvc->>+DB: Find orders where parent=parentId
+    DB-->>-OrderSvc: Orders list with pagination
+    OrderSvc-->>-API: Return orders
+    API-->>-Client: 200 OK - {orders[]}
+    Client->>Parent: Display order history
+    end

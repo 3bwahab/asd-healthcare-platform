@@ -1,0 +1,80 @@
+sequenceDiagram
+    autonumber
+    actor Parent
+    participant API as API Server
+    participant Auth as Auth Service
+    participant DB as MongoDB
+    participant Email as Email Service
+
+    rect rgb(200, 220, 240)
+    Note over Parent,Email: Parent Signup Flow
+    Parent->>+API: POST /api/v1/auth/signup
+    API->>+Auth: signupForParent(userData)
+    Auth->>+DB: Check if email exists
+    DB-->>-Auth: Email not found
+    Auth->>Auth: Hash password with bcrypt
+    Auth->>Auth: Generate email verification code
+    Auth->>Auth: Hash verification code
+    Auth->>+DB: Create new parent with hashed code
+    DB-->>-Auth: Parent created
+    Auth->>+Email: Send verification email
+    Email-->>-Auth: Email sent
+    Auth-->>-API: Return userId & email
+    API-->>-Parent: 201 Created - Check your email
+    end
+
+    rect rgb(220, 240, 200)
+    Note over Parent,Email: Email Verification Flow
+    Parent->>+API: POST /api/v1/auth/verifyemail {resetCode}
+    API->>+Auth: verifyEmailResetCode(resetCode)
+    Auth->>Auth: Hash provided reset code
+    Auth->>+DB: Find parent with hashed code & check expiry
+    DB-->>-Auth: Parent found
+    Auth->>Auth: Set emailResetVerfied = true
+    Auth->>+DB: Save parent
+    DB-->>-Auth: Saved
+    Auth-->>-API: Verification successful
+    API-->>-Parent: 200 OK - Email verified
+    end
+
+    rect rgb(240, 220, 200)
+    Note over Parent,Email: Login Flow
+    Parent->>+API: POST /api/v1/auth/login {email, password}
+    API->>+Auth: loginForParent(credentials)
+    Auth->>+DB: Find parent by email
+    DB-->>-Auth: Parent found
+    Auth->>Auth: Compare password with bcrypt
+    Auth->>Auth: Generate JWT token
+    Auth-->>-API: Return token & user data
+    API-->>-Parent: 200 OK - {token, userData}
+    end
+
+    rect rgb(240, 200, 220)
+    Note over Parent,Email: Password Reset Flow
+    Parent->>+API: POST /api/v1/auth/forgotPassword {email}
+    API->>+Auth: forgotPassword(email)
+    Auth->>+DB: Find parent by email
+    DB-->>-Auth: Parent found
+    Auth->>Auth: Generate 6-digit reset code
+    Auth->>Auth: Hash reset code
+    Auth->>Auth: Set expiration (10 minutes)
+    Auth->>+DB: Save hashed code & expiry
+    DB-->>-Auth: Saved
+    Auth->>+Email: Send reset code email
+    Email-->>-Auth: Email sent
+    Auth-->>-API: Reset code sent
+    API-->>-Parent: 200 OK - Check your email
+
+    Parent->>+API: PUT /api/v1/auth/resetPassword {resetCode, newPassword}
+    API->>+Auth: resetPassword(resetCode, newPassword)
+    Auth->>Auth: Hash provided reset code
+    Auth->>+DB: Find parent with hashed code & check expiry
+    DB-->>-Auth: Parent found
+    Auth->>Auth: Hash new password
+    Auth->>Auth: Clear reset fields
+    Auth->>+DB: Save new password
+    DB-->>-Auth: Saved
+    Auth->>Auth: Generate new JWT token
+    Auth-->>-API: Return token
+    API-->>-Parent: 200 OK - {token}
+    end

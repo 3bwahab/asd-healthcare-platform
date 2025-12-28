@@ -48,6 +48,10 @@ build/
 *.seed
 *.pid.lock
 
+# Generated diagram images (use .mmd source files instead)
+docs/diagrams/*.png
+docs/diagrams/*.svg
+
 # Uploads
 uploads/
 temp/

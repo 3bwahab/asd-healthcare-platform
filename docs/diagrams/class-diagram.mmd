@@ -1,0 +1,180 @@
+classDiagram
+    class Parent {
+        +ObjectId _id
+        +String userName
+        +String email
+        +String password
+        +Number age
+        +String phone
+        +String address
+        +Boolean active
+        +String role
+        +String image
+        +Number numOfChild
+        +String session_id
+        +Date passwordChangedAt
+        +Date emailChangedAt
+        +String passwordResetCode
+        +Date passwordResetExpire
+        +Boolean passwordResetVerfied
+        +String emailResetCode
+        +Date emailResetExpire
+        +Boolean emailResetVerfied
+        +save()
+        +hashPassword()
+    }
+
+    class Doctor {
+        +ObjectId _id
+        +ObjectId parent
+        +String speciailization
+        +String qualifications
+        +String medicalLicense
+        +String address
+        +String about
+        +Number Session_price
+        +Number ratingAverage
+        +Number ratingQuantity
+        +String image
+        +String role
+        +updateRatings()
+    }
+
+    class Child {
+        +ObjectId _id
+        +ObjectId parent
+        +String childName
+        +Date birthday
+        +Number age
+        +String gender
+        +String healthDetails
+        +String autism_level
+        +String degree_level
+        +String image
+        +calcNumOfChild()
+    }
+
+    class Appointment {
+        +ObjectId _id
+        +ObjectId doctorId
+        +ObjectId parentId
+        +String date
+        +String day
+        +String time
+        +String status
+        +Date createdAt
+        +Date updatedAt
+        +checkAvailability()
+        +book()
+        +cancel()
+        +confirm()
+    }
+
+    class Session {
+        +ObjectId _id
+        +ObjectId doctorId
+        +ObjectId parentId
+        +Number session_number
+        +String session_date
+        +String statusOfSession
+        +Array comments
+        +Array session_review
+        +Date createdAt
+        +Date updatedAt
+        +addComment()
+        +addReview()
+    }
+
+    class Order {
+        +ObjectId _id
+        +ObjectId parent
+        +ObjectId doctor
+        +Object info
+        +Number price
+        +String paymentMethodType
+        +Boolean isPaid
+        +Date paidAt
+        +Date createdAt
+        +Date updatedAt
+        +processPayment()
+    }
+
+    class Review {
+        +ObjectId _id
+        +ObjectId parent
+        +ObjectId doctor
+        +String title
+        +Number ratings
+        +Date createdAt
+        +updateDoctorRating()
+    }
+
+    class SessionReview {
+        +ObjectId id
+        +ObjectId parentId
+        +Number ratings
+        +String title
+        +Date createdAt
+    }
+
+    class Medicine {
+        +ObjectId _id
+        +ObjectId pharmacy
+        +String medicineName
+        +String description
+        +Number price
+        +String image
+    }
+
+    class Pharmacy {
+        +ObjectId _id
+        +String pharmacyName
+        +String pharmacyAddress
+        +String phone
+        +String image
+    }
+
+    class Charity {
+        +ObjectId _id
+        +String charityName
+        +String description
+        +String charityAddress
+        +String phone
+        +String image
+    }
+
+    class Education {
+        +ObjectId _id
+        +String articleTitle
+        +String content
+        +String image
+    }
+
+    class AuditLog {
+        +ObjectId _id
+        +ObjectId userId
+        +String action
+        +String resource
+        +ObjectId resourceId
+        +Object changes
+        +String ipAddress
+        +String userAgent
+        +Date timestamp
+    }
+
+    %% Relationships
+    Parent "1" --> "*" Child : has
+    Parent "1" --> "*" Order : places
+    Parent "1" --> "*" Appointment : books
+    Parent "1" --> "*" Session : attends
+    Parent "1" --> "*" Review : writes
+    Parent "1" --> "1" Doctor : can be
+
+    Doctor "1" --> "*" Appointment : provides
+    Doctor "1" --> "*" Session : conducts
+    Doctor "1" --> "*" Order : receives payment from
+    Doctor "1" --> "*" Review : receives
+
+    Session "1" --> "*" SessionReview : contains
+
+    Pharmacy "1" --> "*" Medicine : stocks
